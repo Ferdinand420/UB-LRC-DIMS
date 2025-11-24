@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Dashboard - DIMS</title>
+  <link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body>
+  <div class="container">
+    <!-- Sidebar -->
+    <aside class="sidebar">
+      <h2>UB LRC-DIMS</h2>
+      <nav>
+        <a href="dashboard.php">Dashboard</a>      
+        <a href="reservations.php">Reservations</a> 
+        <a href="feedback.php">Feedback</a>         
+      </nav>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+      <header>
+        <h1>Dashboard</h1>
+      </header>
+
+      <!-- Stats Cards Grid -->
+      <div class="stats-grid">
+        <div class="card">
+          <h3>Total Reservations</h3>
+          <p id="total-reservations">0</p>
+        </div>
+        <div class="card">
+          <h3>Pending</h3>
+          <p id="pending-reservations">0</p>
+        </div>
+        <div class="card">
+          <h3>Approved</h3>
+          <p id="approved-reservations">0</p>
+        </div>
+        <div class="card">
+          <h3>Total Feedback</h3>
+          <p id="total-feedback">0</p>
+        </div>
+      </div>
+
+      <!-- Quick Actions Grid -->
+      <div class="quick-actions-grid">
+        <div class="card">
+          <h3>New Reservation</h3>
+          <p>Submit a new reservation request quickly.</p>
+          <a href="reservations.html"><button>Go to Reservations</button></a>
+        </div>
+        <div class="card">
+          <h3>Submit Feedback</h3>
+          <p>Share your feedback or suggestions.</p>
+          <a href="feedback.html"><button>Go to Feedback</button></a>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <script src="assets/js/dashboard.js"></script>
+</body>
+</html>
