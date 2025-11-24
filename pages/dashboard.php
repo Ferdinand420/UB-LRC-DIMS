@@ -1,3 +1,7 @@
+<?php
+require_once __DIR__ . '/../includes/auth.php';
+require_login();
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -7,24 +11,18 @@
   <link rel="stylesheet" href="../assets/css/style.css">
 </head>
 <body>
+  <?php include __DIR__ . '/../includes/header.php'; ?>
   <div class="container">
-    <!-- Sidebar -->
-    <aside class="sidebar">
-      <h2>UB LRC-DIMS</h2>
-      <nav>
-        <a href="dashboard.php" class="active">Dashboard</a>
-        <a href="reservations.php">Reservations</a>
-        <a href="feedback.php">Feedback</a>
-      </nav>
-    </aside>
+    <?php include __DIR__ . '/../includes/sidebar.php'; render_sidebar('dashboard'); ?>
 
     <!-- Main Content -->
     <main class="main-content">
       <header>
         <h1>Dashboard</h1>
+        <p style="margin:0; font-size:.85rem; color:#555; font-weight:600;">Role: <?php echo htmlspecialchars(get_role()); ?></p>
       </header>
 
-      <!-- Stats Cards Grid -->
+      <!-- Stats Cards Grid (Student Overview) -->
       <div class="stats-grid">
         <div class="card">
           <h3>Total Reservations</h3>
@@ -44,7 +42,7 @@
         </div>
       </div>
 
-      <!-- Quick Actions Grid -->
+      <!-- Quick Actions Grid (Student Shortcuts) -->
       <div class="quick-actions-grid">
         <div class="card">
           <h3>New Reservation</h3>
@@ -59,7 +57,7 @@
       </div>
     </main>
   </div>
-
+  <footer class="landing-footer">&copy; <?php echo date('Y'); ?> UB LRC-DIMS.</footer>
   <script src="../assets/js/dashboard.js"></script>
 </body>
 </html>

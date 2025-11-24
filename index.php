@@ -17,10 +17,10 @@
     </div>
     <div class="site-topbar">
         <div class="topbar-inner">
-            <div class="brand"><img src="assets/media/UB_logo.png" alt="University of Batangas Logo" class="brand-logo" height="56" width="56"> UB LRC-DIMS</div>
+            <div class="brand"><a href="index.php" class="brand-link" aria-label="UB LRC-DIMS Home"><img src="assets/media/UB_logo.png" alt="University of Batangas Logo" class="brand-logo" height="56" width="56"> UB LRC-DIMS</a></div>
             <div class="actions">
-                <a href="pages/student-login.php" class="btn btn-outline light">Student Login</a>
-                <a href="pages/librarian-login.php" class="btn btn-primary">Librarian Login</a>
+                <a href="#" class="btn btn-primary" data-open="student">Student Login</a>
+                <a href="#" class="btn btn-primary" data-open="librarian">Librarian Login</a>
             </div>
         </div>
     </div>
@@ -34,14 +34,51 @@
             <div class="feature-bar-inner">
                 <h2 class="feature-heading">Access LRC Services and Room Reservations here!</h2>
                 <div class="feature-actions">
-                    <a href="#news" class="btn btn-primary feature-btn">News</a>
-                    <a href="#support" class="btn btn-primary feature-btn">Support</a>
-                    <a href="pages/reservations.php" class="btn btn-primary feature-btn">Learn More</a>
+                    <a href="pages/news.php" class="btn btn-primary feature-btn">News</a>
+                    <a href="pages/support.php" class="btn btn-primary feature-btn">Support</a>
+                    <a href="pages/learn-more.php" class="btn btn-primary feature-btn">Learn More</a>
                 </div>
             </div>
         </section>
+        <!-- Login Modals (hidden by default) -->
+        <div class="login-modal" id="student-modal" aria-hidden="true" role="dialog" aria-labelledby="studentModalTitle">
+            <div class="login-modal-dialog">
+                <button class="modal-close" data-close>&times;</button>
+                <h2 id="studentModalTitle" class="login-title">Student Login</h2>
+                <form method="post" action="auth/login.php" class="login-form">
+                    <input type="hidden" name="role" value="student">
+                    <label for="student-email">UB Mail</label>
+                    <input id="student-email" type="email" name="email" placeholder="student@ub.edu.ph" required>
+                    <label for="student-password">Password</label>
+                    <input id="student-password" type="password" name="password" placeholder="••••••••" required>
+                    <button type="submit" class="btn btn-primary full">Sign In</button>
+                    <div class="login-meta">
+                        <a href="#" class="mini-link">Forgot password?</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+        <div class="login-modal" id="librarian-modal" aria-hidden="true" role="dialog" aria-labelledby="librarianModalTitle">
+            <div class="login-modal-dialog">
+                <button class="modal-close" data-close>&times;</button>
+                <h2 id="librarianModalTitle" class="login-title">Librarian Login</h2>
+                <p class="login-sub">Restricted access portal for authorized library staff.</p>
+                <form method="post" action="auth/login.php" class="login-form">
+                    <input type="hidden" name="role" value="librarian">
+                    <label for="librarian-email">UB Mail</label>
+                    <input id="librarian-email" type="email" name="email" placeholder="staff@ub.edu.ph" required>
+                    <label for="librarian-password">Password</label>
+                    <input id="librarian-password" type="password" name="password" placeholder="••••••••" required>
+                    <button type="submit" class="btn btn-primary full">Sign In</button>
+                    <div class="login-meta">
+                        <a href="#" class="mini-link">Forgot password?</a>
+                    </div>
+                </form>
+            </div>
+        </div>
         <footer class="landing-footer">&copy; <?php echo date('Y'); ?> UB LRC-DIMS. All rights reserved.</footer>
     </div>
     <script src="assets/js/background.js"></script>
+    <script src="assets/js/login-modal.js"></script>
 </body>
 </html>

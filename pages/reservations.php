@@ -1,3 +1,7 @@
+<?php
+require_once __DIR__ . '/../includes/auth.php';
+require_login();
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -7,21 +11,15 @@
   <link rel="stylesheet" href="../assets/css/style.css">
 </head>
 <body>
+  <?php include __DIR__ . '/../includes/header.php'; ?>
   <div class="container">
-    <!-- Sidebar -->
-    <aside class="sidebar">
-      <h2>UB LRC-DIMS</h2>
-      <nav>
-        <a href="dashboard.php">Dashboard</a>
-        <a href="reservations.php" class="active">Reservations</a>
-        <a href="feedback.php">Feedback</a>
-      </nav>
-    </aside>
+    <?php include __DIR__ . '/../includes/sidebar.php'; render_sidebar('reservations'); ?>
 
     <!-- Main Content -->
     <main class="main-content">
       <header>
         <h1>Reservations</h1>
+        <p style="margin:0; font-size:.75rem; color:#555; font-weight:600;">Role: <?php echo htmlspecialchars(get_role()); ?></p>
       </header>
 
       <!-- Reservation Form Card -->
@@ -54,7 +52,7 @@
       </div>
     </main>
   </div>
-
+  <footer class="landing-footer">&copy; <?php echo date('Y'); ?> UB LRC-DIMS.</footer>
   <script src="../assets/js/script.js"></script>
 </body>
 </html>
