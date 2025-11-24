@@ -3,52 +3,45 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login - UB LRC-DIMS</title>
+    <title>UB LRC-DIMS</title>
     <link rel="stylesheet" href="assets/css/style.css">
-    <style>
-        body {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            background-color: #f4f4f4;
-            font-family: Arial, sans-serif;
-        }
-        .login-card {
-            background: white;
-            padding: 2rem;
-            border-radius: 8px;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-            width: 100%;
-            max-width: 400px;
-            text-align: center;
-            border-top: 5px solid #800000; /* UB Maroon */
-        }
-        .btn-login {
-            width: 100%; padding: 12px; background-color: #800000;
-            color: white; border: none; border-radius: 4px; cursor: pointer;
-            font-size: 1rem; margin-top: 1rem;
-        }
-        .btn-login:hover { background-color: #600000; }
-    </style>
 </head>
-<body>
-
-    <div class="login-card">
-        <h2 style="color: #800000;">UB LRC-DIMS</h2>
-        <p>Discussion Integrated Management System</p>
-        <form action="pages/dashboard.php" method="POST">
-            <div style="text-align: left; margin-bottom: 15px;">
-                <label>UB Email</label>
-                <input type="email" style="width: 100%; padding: 10px;" placeholder="2201765@ub.edu.ph" required>
-            </div>
-            <div style="text-align: left; margin-bottom: 15px;">
-                <label>Password</label>
-                <input type="password" style="width: 100%; padding: 10px;" placeholder="••••••••" required>
-            </div>
-            <button type="submit" class="btn-login">Sign In</button>
-        </form>
+<body class="has-bg">
+    <!-- Background Video Layer -->
+    <div class="bg-video-container">
+        <video preload="metadata" autoplay muted loop playsinline>
+            <!-- Prefer WebM (smaller) first; fallback to MP4 -->
+            <source src="assets/media/UB-Homepage-Video-w-text.webm" type="video/webm">
+            <source src="assets/media/UB-Homepage-Video-w-text.mp4" type="video/mp4">
+        </video>
     </div>
-
+    <div class="site-topbar">
+        <div class="topbar-inner">
+            <div class="brand"><img src="assets/media/UB_logo.png" alt="University of Batangas Logo" class="brand-logo" height="56" width="56"> UB LRC-DIMS</div>
+            <div class="actions">
+                <a href="pages/student-login.php" class="btn btn-outline light">Student Login</a>
+                <a href="pages/librarian-login.php" class="btn btn-primary">Librarian Login</a>
+            </div>
+        </div>
+    </div>
+    <div class="landing-wrapper">
+        <section class="landing-hero">
+            <div class="landing-hero-inner">
+                <h1>UB Learning Resource Center Discussion Integrated Management System</h1>
+            </div>
+        </section>
+        <section class="feature-bar">
+            <div class="feature-bar-inner">
+                <h2 class="feature-heading">Access LRC Services and Room Reservations here!</h2>
+                <div class="feature-actions">
+                    <a href="#news" class="btn btn-primary feature-btn">News</a>
+                    <a href="#support" class="btn btn-primary feature-btn">Support</a>
+                    <a href="pages/reservations.php" class="btn btn-primary feature-btn">Learn More</a>
+                </div>
+            </div>
+        </section>
+        <footer class="landing-footer">&copy; <?php echo date('Y'); ?> UB LRC-DIMS. All rights reserved.</footer>
+    </div>
+    <script src="assets/js/background.js"></script>
 </body>
 </html>
