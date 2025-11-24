@@ -44,6 +44,10 @@ body {
     transition: background-color 0.2s;
 }
 
+.sidebar nav a.active {
+    background-color: #5c1f2b;
+}
+
 .sidebar nav a:hover {
     background-color: #5c1f2b; /* darker maroon */
 }

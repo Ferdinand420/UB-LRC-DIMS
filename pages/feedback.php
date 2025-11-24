@@ -2,8 +2,9 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Feedback - DIMS</title>
-  <link rel="stylesheet" href="assets/css/style.css">
+  <link rel="stylesheet" href="../assets/css/style.css">
 </head>
 <body>
   <div class="container">
@@ -11,9 +12,9 @@
     <aside class="sidebar">
       <h2>UB LRC-DIMS</h2>
       <nav>
-        <a href="dashboard.php">Dashboard</a>      
-        <a href="reservations.php">Reservations</a> 
-        <a href="feedback.php">Feedback</a>         
+        <a href="dashboard.php">Dashboard</a>
+        <a href="reservations.php">Reservations</a>
+        <a href="feedback.php" class="active">Feedback</a>
       </nav>
     </aside>
 
@@ -43,6 +44,6 @@
     </main>
   </div>
 
-  <script src="assets/js/script.js"></script>
+  <script src="../assets/js/script.js"></script>
 </body>
 </html>
