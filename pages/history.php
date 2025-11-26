@@ -19,14 +19,33 @@ require_login();
         <h1>History</h1>
         <p style="margin:0; font-size:.75rem; color:#555; font-weight:600;">Role: <?php echo htmlspecialchars(get_role()); ?></p>
       </header>
+
+      <!-- Filter Options -->
       <div class="card">
-        <h3>Activity History</h3>
-        <p>Placeholder for past reservations, approvals, and feedback actions.</p>
-        <p>Implement filtering and pagination in future iterations.</p>
+        <h3>Filter History</h3>
+        <div style="display: flex; gap: 1rem; flex-wrap: wrap;">
+          <button onclick="filterHistory('all')" class="btn btn-primary" id="filter-all">All</button>
+          <button onclick="filterHistory('reservations')" class="btn btn-primary" id="filter-reservations">Reservations</button>
+          <button onclick="filterHistory('feedback')" class="btn btn-primary" id="filter-feedback">Feedback</button>
+        </div>
+      </div>
+
+      <!-- History Timeline -->
+      <div class="card" style="margin-top: 1.5rem;">
+        <h3>Activity Timeline</h3>
+        <div id="history-loading" style="text-align: center; padding: 2rem; color: #999;">
+          Loading history...
+        </div>
+        <div id="history-timeline" style="display: none; margin-top: 1rem;">
+          <!-- Populated via JavaScript -->
+        </div>
+        <div id="no-history" style="display: none; text-align: center; padding: 2rem; color: #999;">
+          No history found.
+        </div>
       </div>
     </main>
   </div>
   <footer class="landing-footer">&copy; <?php echo date('Y'); ?> UB LRC-DIMS.</footer>
-  <script src="../assets/js/script.js"></script>
+  <script src="../assets/js/history.js"></script>
 </body>
 </html>

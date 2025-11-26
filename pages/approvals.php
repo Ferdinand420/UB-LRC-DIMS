@@ -22,19 +22,34 @@ if (!is_librarian()) { header('Location: dashboard.php'); exit; }
       </header>
       <div class="card">
         <h3>Reservation Requests</h3>
-        <p>Placeholder: List pending reservations requiring librarian action.</p>
-        <table style="width:100%; margin-top:1rem; border-collapse:collapse;">
-          <thead>
-            <tr><th>ID</th><th>Student</th><th>Room</th><th>Date</th><th>Status</th><th>Action</th></tr>
-          </thead>
-          <tbody>
-            <tr><td>101</td><td>student@ub.edu.ph</td><td>Room A</td><td>2025-11-25</td><td>Pending</td><td><button class="approve-btn">Approve</button> <button class="reject-btn">Reject</button></td></tr>
-            <tr><td>102</td><td>learner@ub.edu.ph</td><td>Room B</td><td>2025-11-26</td><td>Pending</td><td><button class="approve-btn">Approve</button> <button class="reject-btn">Reject</button></td></tr>
-          </tbody>
-        </table>
+        <div id="approvals-message"></div>
+        <div id="approvals-loading" style="text-align: center; padding: 2rem; color: #999;">
+          Loading pending reservations...
+        </div>
+        <div id="approvals-container" style="display: none;">
+          <table style="width:100%; margin-top:1rem; border-collapse:collapse;">
+            <thead>
+              <tr>
+                <th>Student</th>
+                <th>Room</th>
+                <th>Date</th>
+                <th>Time</th>
+                <th>Purpose</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody id="approvals-tbody">
+              <!-- Populated via JavaScript -->
+            </tbody>
+          </table>
+        </div>
+        <div id="no-approvals" style="display: none; text-align: center; padding: 2rem; color: #999;">
+          No pending reservations at this time.
+        </div>
       </div>
     </main>
   </div>
   <footer class="landing-footer">&copy; <?php echo date('Y'); ?> UB LRC-DIMS.</footer>
+  <script src="../assets/js/approvals.js"></script>
 </body>
 </html>

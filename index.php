@@ -45,10 +45,21 @@
             <div class="login-modal-dialog">
                 <button class="modal-close" data-close>&times;</button>
                 <h2 id="studentModalTitle" class="login-title">Student Login</h2>
+                <?php if (isset($_GET['error'])): ?>
+                    <div class="error-message">
+                        <?php 
+                        if ($_GET['error'] === 'invalid') {
+                            echo '⚠ Invalid email or password. Please try again.';
+                        } elseif ($_GET['error'] === 'missing') {
+                            echo '⚠ Please enter both email and password.';
+                        }
+                        ?>
+                    </div>
+                <?php endif; ?>
                 <form method="post" action="auth/login.php" class="login-form">
                     <input type="hidden" name="role" value="student">
                     <label for="student-email">UB Mail</label>
-                    <input id="student-email" type="email" name="email" placeholder="student@ub.edu.ph" required>
+                    <input id="student-email" type="email" name="email" placeholder="student@ub.edu.ph" value="<?php echo htmlspecialchars($_GET['email'] ?? ''); ?>" required>
                     <label for="student-password">Password</label>
                     <input id="student-password" type="password" name="password" placeholder="••••••••" required>
                     <button type="submit" class="btn btn-primary full">Sign In</button>
@@ -63,10 +74,21 @@
                 <button class="modal-close" data-close>&times;</button>
                 <h2 id="librarianModalTitle" class="login-title">Librarian Login</h2>
                 <p class="login-sub">Restricted access portal for authorized library staff.</p>
+                <?php if (isset($_GET['error'])): ?>
+                    <div class="error-message">
+                        <?php 
+                        if ($_GET['error'] === 'invalid') {
+                            echo '⚠ Invalid email or password. Please try again.';
+                        } elseif ($_GET['error'] === 'missing') {
+                            echo '⚠ Please enter both email and password.';
+                        }
+                        ?>
+                    </div>
+                <?php endif; ?>
                 <form method="post" action="auth/login.php" class="login-form">
                     <input type="hidden" name="role" value="librarian">
                     <label for="librarian-email">UB Mail</label>
-                    <input id="librarian-email" type="email" name="email" placeholder="staff@ub.edu.ph" required>
+                    <input id="librarian-email" type="email" name="email" placeholder="staff@ub.edu.ph" value="<?php echo htmlspecialchars($_GET['email'] ?? ''); ?>" required>
                     <label for="librarian-password">Password</label>
                     <input id="librarian-password" type="password" name="password" placeholder="••••••••" required>
                     <button type="submit" class="btn btn-primary full">Sign In</button>
@@ -80,5 +102,6 @@
     </div>
     <script src="assets/js/background.js"></script>
     <script src="assets/js/login-modal.js"></script>
+    <script src="assets/js/login-error.js"></script>
 </body>
 </html>

@@ -22,25 +22,50 @@ if (!is_librarian()) { header('Location: dashboard.php'); exit; }
       </header>
       <div class="card">
         <h3>Record Violation</h3>
-        <form>
-          <input type="email" placeholder="Student Email" required />
-          <input type="text" placeholder="Room" required />
-          <textarea rows="3" placeholder="Description" required></textarea>
-          <button type="submit">Log Violation</button>
+        <div id="violation-message"></div>
+        <form id="violation-form">
+          <label for="student-email">Student Email</label>
+          <input type="email" id="student-email" name="student_email" placeholder="student@ub.edu.ph" required />
+          
+          <label for="violation-room">Room (Optional)</label>
+          <select id="violation-room" name="room_id">
+            <option value="">Select room (if applicable)...</option>
+          </select>
+          
+          <label for="violation-description">Description</label>
+          <textarea id="violation-description" name="description" rows="4" placeholder="Describe the violation..." required></textarea>
+          
+          <button type="submit" class="btn btn-primary">Log Violation</button>
         </form>
       </div>
       <div class="card" style="margin-top:1.75rem;">
         <h3>Recent Violations</h3>
-        <table style="width:100%; margin-top:.75rem; border-collapse:collapse;">
-          <thead><tr><th>ID</th><th>Student</th><th>Room</th><th>Date</th><th>Notes</th></tr></thead>
-          <tbody>
-            <tr><td>15</td><td>student@ub.edu.ph</td><td>Room A</td><td>2025-11-23</td><td>Food in restricted area</td></tr>
-            <tr><td>16</td><td>learner@ub.edu.ph</td><td>Room B</td><td>2025-11-24</td><td>No-show after booking</td></tr>
-          </tbody>
-        </table>
+        <div id="violations-loading" style="text-align: center; padding: 2rem; color: #999;">
+          Loading violations...
+        </div>
+        <div id="violations-container" style="display: none;">
+          <table>
+            <thead>
+              <tr>
+                <th>Student</th>
+                <th>Room</th>
+                <th>Description</th>
+                <th>Logged By</th>
+                <th>Date</th>
+              </tr>
+            </thead>
+            <tbody id="violations-tbody">
+              <!-- Populated via JavaScript -->
+            </tbody>
+          </table>
+        </div>
+        <div id="no-violations" style="display: none; text-align: center; padding: 2rem; color: #999;">
+          No violations recorded.
+        </div>
       </div>
     </main>
   </div>
   <footer class="landing-footer">&copy; <?php echo date('Y'); ?> UB LRC-DIMS.</footer>
+  <script src="../assets/js/violations.js"></script>
 </body>
 </html>
