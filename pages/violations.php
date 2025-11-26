@@ -66,6 +66,7 @@ if (!is_librarian()) { header('Location: dashboard.php'); exit; }
     </main>
   </div>
   <footer class="landing-footer">&copy; <?php echo date('Y'); ?> UB LRC-DIMS.</footer>
+  <script src="../assets/js/sidebar.js"></script>
   <script src="../assets/js/violations.js"></script>
 </body>
 </html>

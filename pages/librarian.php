@@ -33,6 +33,7 @@ require_login();
 		</main>
 	</div>
 	<footer class="landing-footer">&copy; <?php echo date('Y'); ?> UB LRC-DIMS.</footer>
+	<script src="../assets/js/sidebar.js"></script>
 	<script src="../assets/js/script.js"></script>
 </body>
 </html>

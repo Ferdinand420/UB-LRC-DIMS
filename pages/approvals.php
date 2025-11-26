@@ -27,7 +27,7 @@ if (!is_librarian()) { header('Location: dashboard.php'); exit; }
           Loading pending reservations...
         </div>
         <div id="approvals-container" style="display: none;">
-          <table style="width:100%; margin-top:1rem; border-collapse:collapse;">
+          <table>
             <thead>
               <tr>
                 <th>Student</th>
@@ -50,6 +50,7 @@ if (!is_librarian()) { header('Location: dashboard.php'); exit; }
     </main>
   </div>
   <footer class="landing-footer">&copy; <?php echo date('Y'); ?> UB LRC-DIMS.</footer>
+  <script src="../assets/js/sidebar.js"></script>
   <script src="../assets/js/approvals.js"></script>
 </body>
 </html>

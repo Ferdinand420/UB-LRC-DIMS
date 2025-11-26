@@ -75,6 +75,7 @@ if (!is_student()) { header('Location: librarian.php'); exit; }
     </main>
   </div>
   <footer class="landing-footer">&copy; <?php echo date('Y'); ?> UB LRC-DIMS.</footer>
+  <script src="../assets/js/sidebar.js"></script>
   <script src="../assets/js/profile.js"></script>
 </body>
 </html>

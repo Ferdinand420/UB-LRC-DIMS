@@ -1,4 +1,6 @@
 // Reservations page functionality
+let confirmCallback = null;
+
 document.addEventListener('DOMContentLoaded', function() {
     const form = document.getElementById('reservation-form');
     const roomSelect = document.getElementById('room');
@@ -7,6 +9,45 @@ document.addEventListener('DOMContentLoaded', function() {
     const tableElement = document.getElementById('reservation-table');
     const loadingElement = document.getElementById('reservations-loading');
     const noDataElement = document.getElementById('no-reservations');
+
+    // Modal elements
+    const modal = document.getElementById('confirm-modal');
+    const modalTitle = document.getElementById('modal-title');
+    const modalMessage = document.getElementById('modal-message');
+    const modalConfirm = document.getElementById('modal-confirm');
+    const modalCancel = document.getElementById('modal-cancel');
+
+    // Modal handlers
+    modalConfirm.addEventListener('click', function() {
+        if (confirmCallback) {
+            confirmCallback();
+            confirmCallback = null;
+        }
+        closeModal();
+    });
+
+    modalCancel.addEventListener('click', function() {
+        confirmCallback = null;
+        closeModal();
+    });
+
+    modal.addEventListener('click', function(e) {
+        if (e.target === modal) {
+            confirmCallback = null;
+            closeModal();
+        }
+    });
+
+    function showConfirmModal(title, message, callback) {
+        modalTitle.textContent = title;
+        modalMessage.textContent = message;
+        confirmCallback = callback;
+        modal.classList.add('active');
+    }
+
+    function closeModal() {
+        modal.classList.remove('active');
+    }
 
     // Set minimum date to today
     if (dateInput) {
@@ -22,6 +63,19 @@ document.addEventListener('DOMContentLoaded', function() {
     // Load existing reservations
     loadReservations();
 
+    // Handle cancel button
+    const cancelBtn = document.getElementById('cancel-btn');
+    if (cancelBtn) {
+        cancelBtn.addEventListener('click', function() {
+            if (form) {
+                form.reset();
+                if (messageDiv) {
+                    messageDiv.style.display = 'none';
+                }
+            }
+        });
+    }
+
     // Handle form submission
     if (form) {
         form.addEventListener('submit', async function(e) {
@@ -35,29 +89,44 @@ document.addEventListener('DOMContentLoaded', function() {
                 purpose: document.getElementById('purpose').value
             };
 
-            try {
-                const response = await fetch('../api/create_reservation.php', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify(formData)
-                });
-
-                const data = await response.json();
-
-                if (data.success) {
-                    showMessage(data.message, 'success');
-                    form.reset();
-                    loadReservations(); // Refresh the list
-                } else {
-                    showMessage(data.message, 'error');
+            // Show confirmation modal
+            const roomName = roomSelect.options[roomSelect.selectedIndex].text;
+            const dateStr = formatDate(formData.reservation_date);
+            const timeStr = `${formatTime(formData.start_time)} - ${formatTime(formData.end_time)}`;
+            
+            showConfirmModal(
+                'Confirm Reservation',
+                `Are you sure you want to reserve ${roomName} on ${dateStr} from ${timeStr}?`,
+                async function() {
+                    await submitReservation(formData);
                 }
-            } catch (error) {
-                showMessage('Error submitting reservation. Please try again.', 'error');
-                console.error('Error:', error);
-            }
+            );
         });
+    }
+
+    async function submitReservation(formData) {
+        try {
+            const response = await fetch('../api/create_reservation.php', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(formData)
+            });
+
+            const data = await response.json();
+
+            if (data.success) {
+                showMessage(data.message, 'success');
+                form.reset();
+                loadReservations(); // Refresh the list
+            } else {
+                showMessage(data.message, 'error');
+            }
+        } catch (error) {
+            showMessage('Error submitting reservation. Please try again.', 'error');
+            console.error('Error:', error);
+        }
     }
 
     async function loadRooms() {
@@ -111,12 +180,12 @@ document.addEventListener('DOMContentLoaded', function() {
 
         const tbody = tableElement.querySelector('tbody');
         tbody.innerHTML = '';
+        
+        // Check if we're showing student column (librarian view) - only once
+        const showStudent = tableElement.querySelector('thead th:first-child').textContent === 'Student';
 
         reservations.forEach(reservation => {
             const row = document.createElement('tr');
-            
-            // Check if we're showing student column (librarian view)
-            const showStudent = tableElement.querySelector('thead th:first-child').textContent === 'Student';
             
             if (showStudent) {
                 const studentCell = document.createElement('td');
@@ -151,8 +220,65 @@ document.addEventListener('DOMContentLoaded', function() {
             statusCell.appendChild(statusBadge);
             row.appendChild(statusCell);
 
+            // Add cancel button for students on pending/approved reservations
+            if (!showStudent && (reservation.status === 'pending' || reservation.status === 'approved')) {
+                const actionCell = document.createElement('td');
+                const cancelBtn = document.createElement('button');
+                cancelBtn.className = 'btn';
+                cancelBtn.style.cssText = 'padding: 0.4rem 0.8rem; font-size: 0.85rem; background: var(--color-primary); color: #fff; transition: background 0.2s;';
+                cancelBtn.textContent = 'Cancel';
+                cancelBtn.onmouseover = function() { this.style.background = 'var(--color-gold)'; };
+                cancelBtn.onmouseout = function() { this.style.background = 'var(--color-primary)'; };
+                cancelBtn.onclick = function() {
+                    handleCancelReservation(reservation.id, reservation.room_name, reservation.reservation_date, reservation.start_time, reservation.end_time);
+                };
+                actionCell.appendChild(cancelBtn);
+                row.appendChild(actionCell);
+            } else if (!showStudent) {
+                const actionCell = document.createElement('td');
+                actionCell.textContent = '-';
+                row.appendChild(actionCell);
+            }
+
             tbody.appendChild(row);
         });
+    }
+
+    function handleCancelReservation(reservationId, roomName, date, startTime, endTime) {
+        const dateStr = formatDate(date);
+        const timeStr = `${formatTime(startTime)} - ${formatTime(endTime)}`;
+        
+        showConfirmModal(
+            'Cancel Reservation',
+            `Are you sure you want to cancel your reservation for ${roomName} on ${dateStr} from ${timeStr}?`,
+            async function() {
+                await cancelReservation(reservationId);
+            }
+        );
+    }
+
+    async function cancelReservation(reservationId) {
+        try {
+            const response = await fetch('../api/cancel_reservation.php', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ reservation_id: reservationId })
+            });
+
+            const data = await response.json();
+
+            if (data.success) {
+                showMessage(data.message, 'success');
+                loadReservations(); // Refresh the list
+            } else {
+                showMessage(data.message, 'error');
+            }
+        } catch (error) {
+            showMessage('Error cancelling reservation. Please try again.', 'error');
+            console.error('Error:', error);
+        }
     }
 
     function showMessage(message, type) {

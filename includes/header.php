@@ -9,7 +9,7 @@ $base = $inPages ? '../' : '';
     <div class="actions">
       <?php if (get_role()): ?>
         <span style="color:#fff; font-size:.8rem; font-weight:600; letter-spacing:.5px;">Logged in as <?= htmlspecialchars(get_role()) ?></span>
-        <a href="<?= $base ?>auth/logout.php" class="btn btn-outline" style="margin-left:.75rem;">Logout</a>
+        <a href="<?= $base ?>auth/logout.php" class="btn logout-btn" style="margin-left:.75rem;">Logout</a>
       <?php else: ?>
         <!-- No login buttons here (handled on public landing or modals) -->
       <?php endif; ?>
