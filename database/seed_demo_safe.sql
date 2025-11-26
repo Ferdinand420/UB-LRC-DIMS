@@ -1,22 +1,27 @@
--- Enhanced seed data for demonstration and testing
+-- Safe seed data that disables FK checks for entire session
 -- Run this after schema.sql
 
 USE ub_lrc_dims;
 
--- Disable foreign key checks to allow truncation
 SET FOREIGN_KEY_CHECKS = 0;
+SET AUTOCOMMIT = 0;
+START TRANSACTION;
 
--- Clear existing data (order matters - child tables first)
-TRUNCATE TABLE waitlist;
-TRUNCATE TABLE violations;
-TRUNCATE TABLE feedback;
-TRUNCATE TABLE reservations;
--- Now parent tables
-TRUNCATE TABLE rooms;
-TRUNCATE TABLE users;
+-- Clear existing data
+DELETE FROM waitlist;
+DELETE FROM violations;
+DELETE FROM feedback;
+DELETE FROM reservations;
+DELETE FROM rooms;
+DELETE FROM users;
 
--- Re-enable foreign key checks
-SET FOREIGN_KEY_CHECKS = 1;
+-- Reset auto-increment counters
+ALTER TABLE users AUTO_INCREMENT = 1;
+ALTER TABLE rooms AUTO_INCREMENT = 1;
+ALTER TABLE reservations AUTO_INCREMENT = 1;
+ALTER TABLE feedback AUTO_INCREMENT = 1;
+ALTER TABLE violations AUTO_INCREMENT = 1;
+ALTER TABLE waitlist AUTO_INCREMENT = 1;
 
 -- Insert test users (password for all: password123)
 INSERT INTO users (email, password_hash, role, full_name) VALUES
@@ -78,6 +83,10 @@ INSERT INTO waitlist (user_id, room_id, preferred_date, preferred_time, status) 
 (1, 2, '2025-11-27', '13:00:00', 'waiting'),
 (2, 1, '2025-11-28', '09:00:00', 'waiting'),
 (3, 1, '2025-11-29', '14:00:00', 'waiting');
+
+COMMIT;
+SET FOREIGN_KEY_CHECKS = 1;
+SET AUTOCOMMIT = 1;
 
 -- Display summary
 SELECT 'Database seeded successfully!' as Status;
