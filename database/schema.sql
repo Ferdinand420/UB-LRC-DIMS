@@ -92,16 +92,3 @@ CREATE TABLE IF NOT EXISTS waitlist (
     INDEX idx_room (room_id),
     INDEX idx_status (status)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
-
--- Password reset tokens
-CREATE TABLE IF NOT EXISTS password_resets (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    user_id INT NOT NULL,
-    token VARCHAR(64) NOT NULL,
-    expires_at DATETIME NOT NULL,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
-    UNIQUE KEY uniq_token (token),
-    INDEX idx_user (user_id),
-    INDEX idx_expires (expires_at)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;

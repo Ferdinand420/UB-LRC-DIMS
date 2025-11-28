@@ -29,7 +29,7 @@
         <button type="submit" class="btn btn-primary" style="width:100%;">Sign In</button>
         <div class="auth-actions">
           <a href="../index.php" class="small-link">Back to Landing</a>
-          <a href="forgot_password.php" class="small-link">Forgot password?</a>
+          <a href="#" class="small-link">Forgot password?</a>
         </div>
       </form>
     </div>

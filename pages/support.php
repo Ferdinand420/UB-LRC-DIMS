@@ -9,7 +9,7 @@
 <body class="has-bg">
   <div class="site-topbar">
     <div class="topbar-inner">
-      <div class="brand"><a href="../index.php" class="brand-link" aria-label="UB LRC-DIMS Home"><img src="../assets/img/DIMS_logo.png" alt="DIMS Logo" class="brand-logo" height="40" width="40"> UB LRC-DIMS</a></div>
+      <div class="brand"><a href="../index.php" class="brand-link" aria-label="UB LRC-DIMS Home"><img src="../assets/media/UB_logo.png" alt="UB Logo" class="brand-logo" height="40" width="40"> UB LRC-DIMS</a></div>
       <div class="actions">
         <a href="../index.php" class="btn btn-primary">Home</a>
         <a href="#" class="btn btn-primary" data-open="student">Student Login</a>
@@ -59,7 +59,7 @@
         <input id="student-password" type="password" name="password" placeholder="••••••••" required>
         <button type="submit" class="btn btn-primary full">Sign In</button>
         <div class="login-meta">
-          <a href="forgot_password.php" class="mini-link">Forgot password?</a>
+          <a href="#" class="mini-link">Forgot password?</a>
         </div>
       </form>
     </div>
@@ -76,7 +76,7 @@
         <input id="librarian-password" type="password" name="password" placeholder="••••••••" required>
         <button type="submit" class="btn btn-primary full">Sign In</button>
         <div class="login-meta">
-          <a href="forgot_password.php" class="mini-link">Forgot password?</a>
+          <a href="#" class="mini-link">Forgot password?</a>
         </div>
       </form>
     </div>
