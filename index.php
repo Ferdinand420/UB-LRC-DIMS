@@ -17,7 +17,7 @@
     </div>
     <div class="site-topbar">
         <div class="topbar-inner">
-            <div class="brand"><a href="index.php" class="brand-link" aria-label="UB LRC-DIMS Home"><img src="assets/media/UB_logo.png" alt="University of Batangas Logo" class="brand-logo" height="56" width="56"> UB LRC-DIMS</a></div>
+            <div class="brand"><a href="index.php" class="brand-link" aria-label="UB LRC-DIMS Home"><img src="assets/img/DIMS_logo.png" alt="DIMS Logo" class="brand-logo" height="56" width="56"> UB LRC-DIMS</a></div>
             <div class="actions">
                 <a href="#" class="btn btn-primary" data-open="student">Student Login</a>
                 <a href="#" class="btn btn-primary" data-open="librarian">Librarian Login</a>
@@ -64,7 +64,7 @@
                     <input id="student-password" type="password" name="password" placeholder="••••••••" required>
                     <button type="submit" class="btn btn-primary full">Sign In</button>
                     <div class="login-meta">
-                        <a href="#" class="mini-link">Forgot password?</a>
+                        <a href="#" class="mini-link" data-open="forgot">Forgot password?</a>
                     </div>
                 </form>
             </div>
@@ -93,8 +93,35 @@
                     <input id="librarian-password" type="password" name="password" placeholder="••••••••" required>
                     <button type="submit" class="btn btn-primary full">Sign In</button>
                     <div class="login-meta">
-                        <a href="#" class="mini-link">Forgot password?</a>
+                        <a href="#" class="mini-link" data-open="forgot">Forgot password?</a>
                     </div>
+                </form>
+            </div>
+        </div>
+        <!-- Forgot Password Modal -->
+        <div class="login-modal" id="forgot-modal" aria-hidden="true" role="dialog" aria-labelledby="forgotModalTitle">
+            <div class="login-modal-dialog">
+                <button class="modal-close" data-close>&times;</button>
+                <h2 id="forgotModalTitle" class="login-title">Forgot Password</h2>
+                <form method="post" class="forgot-form" id="forgot-form">
+                    <label for="forgot-email">Enter your email</label>
+                    <input id="forgot-email" type="email" name="email" placeholder="your@email.com" required>
+                    <button type="submit" class="btn btn-primary full">Send Reset Link</button>
+                    <div class="form-message" id="forgot-message" style="margin-top:.75rem;"></div>
+                </form>
+            </div>
+        </div>
+        <!-- Reset Password Modal (opens when token is in URL) -->
+        <div class="login-modal" id="reset-modal" aria-hidden="true" role="dialog" aria-labelledby="resetModalTitle">
+            <div class="login-modal-dialog">
+                <button class="modal-close" data-close>&times;</button>
+                <h2 id="resetModalTitle" class="login-title">Reset Password</h2>
+                <form method="post" class="reset-form" id="reset-form">
+                    <input type="hidden" name="token" id="reset-token" value="">
+                    <label for="reset-password">New Password</label>
+                    <input id="reset-password" type="password" name="password" placeholder="••••••••" required>
+                    <button type="submit" class="btn btn-primary full">Reset Password</button>
+                    <div class="form-message" id="reset-message" style="margin-top:.75rem;"></div>
                 </form>
             </div>
         </div>
