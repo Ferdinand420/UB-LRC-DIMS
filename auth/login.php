@@ -14,7 +14,7 @@ error_log("Login attempt - Email: $email, Role: $role");
 
 if (!$email || !$password) {
     error_log("Login failed - missing credentials");
-    header('Location: /ub-lrc-dims/index.php?error=missing');
+    header('Location: /index.php?error=missing');
     exit;
 }
 
@@ -24,7 +24,7 @@ error_log("Auth result: " . ($user ? "Success - Role: {$user['role']}" : "Failed
 
 if (!$user) {
     error_log("Login failed - invalid credentials");
-    header('Location: /ub-lrc-dims/index.php?error=invalid&email=' . urlencode($email));
+    header('Location: /index.php?error=invalid&email=' . urlencode($email));
     exit;
 }
 
@@ -34,9 +34,9 @@ error_log("Session set - Role: " . get_role());
 
 if (get_role() === 'librarian') {
     error_log("Redirecting to librarian page");
-    header('Location: /ub-lrc-dims/pages/librarian.php');
+    header('Location: /pages/librarian.php');
     exit;
 }
 error_log("Redirecting to dashboard");
-header('Location: /ub-lrc-dims/pages/dashboard.php');
+header('Location: /pages/dashboard.php');
 exit;

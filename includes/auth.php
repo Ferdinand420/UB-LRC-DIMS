@@ -11,7 +11,7 @@ function is_student(): bool { return get_role() === 'student'; }
 function is_librarian(): bool { return get_role() === 'librarian'; }
 function require_login(): void {
     if (!get_role()) {
-        header('Location: /ub-lrc-dims/index.php');
+        header('Location: /index.php');
         exit;
     }
 }
