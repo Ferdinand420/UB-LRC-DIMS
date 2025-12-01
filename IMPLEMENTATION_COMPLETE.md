@@ -22,12 +22,7 @@
 - ✅ **Approvals**: Approve/reject pending reservations
 - ✅ **Rooms**: Add new rooms, view all rooms
 - ✅ **Violations**: Log violations against students, view history
-- ✅ **Reports**: Data visualization with date filtering
-  - Reservation statistics
-  - Room utilization charts
-  - Peak hours analysis
-  - Top active students
-  - Feedback metrics
+ 
 - ✅ **Feedback**: View all student feedback
 - ✅ **History**: View all system activity
 
@@ -110,7 +105,7 @@ ub-lrc-dims/
 │   ├── librarian.php (Librarian dashboard)
 │   ├── approvals.php (Reservation approvals)
 │   ├── violations.php (Violation logging)
-│   └── reports.php (Analytics & reports)
+ 
 ├── api/
 │   ├── dashboard_stats.php
 │   ├── create_reservation.php
@@ -123,7 +118,7 @@ ub-lrc-dims/
 │   ├── update_reservation_status.php
 │   ├── log_violation.php
 │   ├── get_violations.php
-│   ├── get_report_stats.php
+ 
 │   ├── get_history.php
 │   ├── get_profile.php
 │   └── update_profile.php
@@ -139,7 +134,7 @@ ub-lrc-dims/
 │       ├── approvals.js
 │       ├── rooms.js
 │       ├── violations.js
-│       ├── reports.js
+ 
 │       ├── history.js
 │       └── profile.js
 ├── config/
@@ -161,10 +156,10 @@ ub-lrc-dims/
 
 ### For Librarians:
 1. **Approve Requests**: One-click approve/reject from queue
-2. **Monitor Usage**: Visual charts and statistics
+2. **Monitor Usage**: (Reports removed)
 3. **Log Violations**: Record student infractions
 4. **Add Rooms**: Manage room inventory
-5. **Generate Reports**: Date-filtered analytics
+5. (Reports removed)
 
 ## 🎯 Testing Scenarios
 
@@ -182,7 +177,7 @@ ub-lrc-dims/
 3. See pending reservations (5 available)
 4. Click "Approve" on one
 5. Confirm → Row disappears
-6. Go to Reports → See updated statistics
+6. (Reports removed)
 
 ### Scenario 3: Feedback Loop
 1. Login as student

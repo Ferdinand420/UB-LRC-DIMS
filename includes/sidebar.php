@@ -14,7 +14,6 @@ function render_sidebar(string $active): void {
     'approvals' => ['label' => 'Approvals', 'icon' => '✓'],
     'rooms' => ['label' => 'Rooms', 'icon' => '🚪'],
     'violations' => ['label' => 'Violations', 'icon' => '⚠'],
-    'reports' => ['label' => 'Reports', 'icon' => '📈'],
     'feedback' => ['label' => 'Feedback', 'icon' => '💬'],
     'history' => ['label' => 'History', 'icon' => '📜'],
   ];

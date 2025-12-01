@@ -39,7 +39,6 @@
         <h3 style="margin:0 0 .5rem; color:var(--color-primary);">Roadmap</h3>
         <ul style="padding-left:1.1rem; margin:0; line-height:1.55;">
           <li>Single Sign-On integration</li>
-          <li>Advanced analytics charts</li>
           <li>Automated email notifications</li>
           <li>Digital archive search</li>
         </ul>

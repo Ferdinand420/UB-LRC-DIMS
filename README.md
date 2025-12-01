@@ -31,7 +31,7 @@ If your MySQL root user has a password, update `config/db.php` accordingly.
 
 - Entry: `index.php` (public landing with login modals)
 - Auth: `auth/login.php` + helpers in `includes/auth.php` (session-based, role-aware)
-- Pages: Student and Librarian views in `pages/` (dashboard, reservations, rooms, feedback, history, profile, approvals, violations, reports)
+- Pages: Student and Librarian views in `pages/` (dashboard, reservations, rooms, feedback, history, profile, approvals, violations)
 - APIs: JSON endpoints in `api/` consumed by page scripts in `assets/js/`
 - Styling: Single theme in `assets/css/style.css` (responsive, rounded UI, maroon/gold)
 

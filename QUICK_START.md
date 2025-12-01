@@ -44,7 +44,7 @@ mysql -u root ub_lrc_dims < C:/xampp/htdocs/ub-lrc-dims/database/seed_demo.sql
 3. Login: staff@ub.edu.ph / password123
 4. Click "Approvals" → Approve a pending request
 5. Click "Violations" → Log a violation
-6. Click "Reports" → View analytics
+6. Click "Feedback" → Review submissions
 7. Click "Rooms" → Add a new room
 ```
 
@@ -53,15 +53,14 @@ mysql -u root ub_lrc_dims < C:/xampp/htdocs/ub-lrc-dims/database/seed_demo.sql
 ### ✅ Student Pages (6)
 - Dashboard, Reservations, Rooms, Feedback, History, Profile
 
-### ✅ Librarian Pages (6)
-- Dashboard, Approvals, Rooms, Violations, Reports, Feedback, History
+### ✅ Librarian Pages (5)
+- Dashboard, Approvals, Rooms, Violations, Feedback, History
 
 ### ✅ Core Functionality
 - Role-based authentication
 - Reservation system with approval workflow
 - Feedback submission and tracking
 - Violation logging
-- Analytics and reporting
 - Profile management
 - Activity history
 
