@@ -4,6 +4,9 @@
   const librarianBtn = document.querySelector('[data-open="librarian"]');
   const studentModal = document.getElementById('student-modal');
   const librarianModal = document.getElementById('librarian-modal');
+  const forgotBtnLinks = document.querySelectorAll('[data-open="forgot"]');
+  const forgotModal = document.getElementById('forgot-modal');
+  const forgotResetModal = document.getElementById('forgot-reset-modal');
   const focusableSelectors = 'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])';
   let lastFocused = null;
 
@@ -37,13 +40,75 @@
   });
   document.addEventListener('keydown', e => {
     if(e.key === 'Escape'){
-      [studentModal, librarianModal].forEach(m => { if(m?.classList.contains('active')) closeModal(m); });
+      [studentModal, librarianModal, forgotModal, forgotResetModal].forEach(m => { if(m?.classList.contains('active')) closeModal(m); });
     }
   });
   // Close when clicking backdrop
-  [studentModal, librarianModal].forEach(m => {
+  [studentModal, librarianModal, forgotModal, forgotResetModal].forEach(m => {
     m?.addEventListener('click', e => { if(e.target === m) closeModal(m); });
   });
+
+  // Open forgot modal from any trigger
+  forgotBtnLinks.forEach(link => {
+    link.addEventListener('click', e => { e.preventDefault(); openModal(forgotModal); });
+  });
+
+  // Forgot modal form handlers
+  const requestForm = document.getElementById('request-reset-form');
+  const performForm = document.getElementById('perform-reset-form');
+  if (requestForm) {
+    requestForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const emailInput = document.getElementById('reset-email');
+      const msg = document.getElementById('request-reset-msg');
+      msg.textContent = '';
+      try {
+        const form = new FormData();
+        form.append('email', (emailInput.value || '').trim());
+        const res = await fetch('/ub-lrc-dims/api/request_password_reset.php', { method: 'POST', body: form });
+        const data = await res.json();
+        if (data.ok) {
+          // No success text shown; proceed silently to next step
+          if (data.token) {
+            const tokenInput = document.getElementById('reset-token-input');
+            if (tokenInput) tokenInput.value = data.token;
+          }
+          // Proceed to step 2 modal
+          closeModal(forgotModal);
+          openModal(forgotResetModal);
+        } else {
+          msg.textContent = data.error || 'Request failed';
+        }
+      } catch (err) {
+        msg.textContent = 'Network error';
+      }
+    });
+  }
+  if (performForm) {
+    performForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const token = (document.getElementById('reset-token-input').value || '').trim();
+      const password = document.getElementById('new-password').value;
+      const confirm = document.getElementById('confirm-password').value;
+      const msg = document.getElementById('perform-reset-msg');
+      msg.textContent = 'Resetting…';
+      try {
+        const form = new FormData();
+        form.append('token', token);
+        form.append('password', password);
+        form.append('confirm', confirm);
+        const res = await fetch('/ub-lrc-dims/api/reset_password.php', { method: 'POST', body: form });
+        const data = await res.json();
+        if (data.ok) {
+          msg.textContent = 'Password updated successfully. You can now log in.';
+        } else {
+          msg.textContent = data.error || 'Reset failed';
+        }
+      } catch (err) {
+        msg.textContent = 'Network error';
+      }
+    });
+  }
 
   // Focus trap
   let currentTrapModal = null;

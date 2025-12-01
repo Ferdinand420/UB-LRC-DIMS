@@ -43,10 +43,41 @@
         <button type="submit" class="btn btn-primary" style="width:100%;">Sign In</button>
         <div class="auth-actions">
           <a href="../index.php" class="small-link">Back to Landing</a>
-          <a href="#" class="small-link">Need access?</a>
+          <a href="#" class="small-link" data-open="forgot">Forgot password?</a>
         </div>
       </form>
     </div>
   </div>
+  <!-- Forgot Password Step 1: Enter Email -->
+  <div class="login-modal" id="forgot-modal" aria-hidden="true" role="dialog" aria-labelledby="forgotModalTitle">
+    <div class="login-modal-dialog">
+      <button class="modal-close" data-close>&times;</button>
+      <h2 id="forgotModalTitle" class="login-title">Forgot Password</h2>
+      <p>Enter your email address, then click Reset Password.</p>
+      <form id="request-reset-form" style="margin-top: 12px;">
+        <label for="reset-email">Email</label>
+        <input id="reset-email" name="email" type="email" placeholder="you@ub.edu.ph" required />
+        <button type="submit" class="btn btn-primary" style="margin-top: 12px;">Reset Password</button>
+        <div id="request-reset-msg" class="mini-note" style="margin-top: 10px;"></div>
+      </form>
+    </div>
+  </div>
+  <!-- Forgot Password Step 2: Set New Password -->
+  <div class="login-modal" id="forgot-reset-modal" aria-hidden="true" role="dialog" aria-labelledby="forgotResetModalTitle">
+    <div class="login-modal-dialog">
+      <button class="modal-close" data-close>&times;</button>
+      <h2 id="forgotResetModalTitle" class="login-title">Set New Password</h2>
+      <form id="perform-reset-form" style="margin-top: 12px;">
+        <input id="reset-token-input" name="token" type="hidden" />
+        <label for="new-password">New Password</label>
+        <input id="new-password" name="password" type="password" placeholder="At least 8 characters" required />
+        <label for="confirm-password">Confirm New Password</label>
+        <input id="confirm-password" name="confirm" type="password" required />
+        <button type="submit" class="btn btn-primary" style="margin-top: 12px;">Update Password</button>
+        <div id="perform-reset-msg" class="mini-note" style="margin-top: 10px;"></div>
+      </form>
+    </div>
+  </div>
+  <script src="../assets/js/login-modal.js"></script>
 </body>
 </html>
