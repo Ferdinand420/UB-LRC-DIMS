@@ -17,7 +17,7 @@ if (!is_librarian()) { header('Location: dashboard.php'); exit; }
     <?php include __DIR__ . '/../includes/sidebar.php'; render_sidebar('violations'); ?>
     <main class="main-content">
       <header>
-        <h1>Logged Violations</h1>
+        <h1>Violation Records</h1>
         <p style="margin:0; font-size:.75rem; color:#555; font-weight:600;">Role: <?php echo htmlspecialchars(get_role()); ?></p>
       </header>
       <div class="card">
@@ -39,7 +39,7 @@ if (!is_librarian()) { header('Location: dashboard.php'); exit; }
         </form>
       </div>
       <div class="card" style="margin-top:1.75rem;">
-        <h3>Recent Violations</h3>
+        <h3>Violation Records</h3>
         <div id="violations-loading" style="text-align: center; padding: 2rem; color: #999;">
           Loading violations...
         </div>

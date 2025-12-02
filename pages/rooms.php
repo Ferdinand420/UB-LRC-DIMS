@@ -20,39 +20,17 @@ require_login();
         <p style="margin:0; font-size:.75rem; color:#555; font-weight:600;">Role: <?php echo htmlspecialchars(get_role()); ?></p>
       </header>
 
-      <?php if (is_librarian()): ?>
-      <!-- Room Management (Librarians Only) -->
-      <div class="card">
-        <h3>Add New Room</h3>
-        <div id="room-message"></div>
-        <form id="add-room-form">
-          <label for="room-name">Room Name</label>
-          <input type="text" id="room-name" name="name" placeholder="e.g., Room A" required>
-
-          <label for="room-capacity">Capacity</label>
-          <input type="number" id="room-capacity" name="capacity" placeholder="e.g., 8" min="1" required>
-
-          <label for="room-status">Status</label>
-          <select id="room-status" name="status" required>
-            <option value="available">Available</option>
-            <option value="maintenance">Under Maintenance</option>
-          </select>
-
-          <label for="room-description">Description (Optional)</label>
-          <textarea id="room-description" name="description" rows="2" placeholder="Brief description..."></textarea>
-
-          <button type="submit" class="btn btn-primary">Add Room</button>
-        </form>
-      </div>
-      <?php endif; ?>
+      
 
       <div class="card" style="margin-top: 2rem;">
-        <h3>Available Rooms</h3>
+        <div style="display:flex; align-items:center; justify-content:space-between; gap:1rem; flex-wrap:wrap;">
+          <h3 style="margin:0;">Rooms</h3>
+        </div>
         <div id="rooms-loading" style="text-align: center; padding: 2rem; color: #999;">
           Loading rooms...
         </div>
-        <div id="rooms-grid" style="display: none; display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 1.5rem; margin-top: 1rem;">
-          <!-- Populated via JavaScript -->
+        <div id="rooms-container" style="margin-top:1rem;">
+          <!-- Status table populated by JS -->
         </div>
         <div id="no-rooms" style="display: none; text-align: center; padding: 2rem; color: #999;">
           No rooms available.

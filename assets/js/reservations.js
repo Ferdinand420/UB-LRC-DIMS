@@ -90,7 +90,7 @@ document.addEventListener('DOMContentLoaded', function() {
             };
 
             // Show confirmation modal
-            const roomName = roomSelect.options[roomSelect.selectedIndex].text;
+            const roomName = roomSelect.options[roomSelect.selectedIndex].text; // includes capacity in text
             const dateStr = formatDate(formData.reservation_date);
             const timeStr = `${formatTime(formData.start_time)} - ${formatTime(formData.end_time)}`;
             
@@ -194,7 +194,8 @@ document.addEventListener('DOMContentLoaded', function() {
             }
 
             const roomCell = document.createElement('td');
-            roomCell.textContent = reservation.room_name;
+            const cap = reservation.capacity != null ? ` (Cap: ${reservation.capacity})` : '';
+            roomCell.textContent = reservation.room_name + cap;
             row.appendChild(roomCell);
 
             const dateCell = document.createElement('td');
