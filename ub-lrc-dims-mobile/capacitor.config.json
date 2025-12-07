@@ -1,0 +1,14 @@
+{
+  "appId": "com.ub.lrcdims",
+  "appName": "UB LRC DIMS",
+  "webDir": "www",
+  "plugins": {
+    "SplashScreen": {
+      "launchAutoHide": false
+    }
+  },
+  "server": {
+    "url": "http://10.0.2.2/UB-LRC-DIMS/",
+    "cleartext": true
+  }
+}

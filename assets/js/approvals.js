@@ -1,4 +1,7 @@
 // Approvals page functionality (Librarian only)
+// Utility to tag cells for responsive stacking
+const setDataLabel = (cell, label) => { if (cell) cell.setAttribute('data-label', label); };
+
 document.addEventListener('DOMContentLoaded', function() {
     const messageDiv = document.getElementById('approvals-message');
     const loadingElement = document.getElementById('approvals-loading');
@@ -43,20 +46,24 @@ document.addEventListener('DOMContentLoaded', function() {
 
             const studentCell = document.createElement('td');
             studentCell.innerHTML = `<strong>${reservation.user_name}</strong><br><small style="color:#666;">${reservation.user_email}</small>`;
+            setDataLabel(studentCell, 'Student');
             row.appendChild(studentCell);
 
             const roomCell = document.createElement('td');
             roomCell.textContent = reservation.room_name;
+            setDataLabel(roomCell, 'Room');
             row.appendChild(roomCell);
 
             const dateCell = document.createElement('td');
             dateCell.textContent = formatDate(reservation.reservation_date);
             dateCell.style.whiteSpace = 'nowrap';
+            setDataLabel(dateCell, 'Date');
             row.appendChild(dateCell);
 
             const timeCell = document.createElement('td');
             timeCell.textContent = `${formatTime(reservation.start_time)} - ${formatTime(reservation.end_time)}`;
             timeCell.style.whiteSpace = 'nowrap';
+            setDataLabel(timeCell, 'Time');
             row.appendChild(timeCell);
 
             const purposeCell = document.createElement('td');
@@ -64,6 +71,7 @@ document.addEventListener('DOMContentLoaded', function() {
             purposeCell.style.maxWidth = '200px';
             purposeCell.style.overflow = 'hidden';
             purposeCell.style.textOverflow = 'ellipsis';
+            setDataLabel(purposeCell, 'Purpose');
             row.appendChild(purposeCell);
 
             const actionCell = document.createElement('td');
@@ -82,6 +90,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
             actionCell.appendChild(approveBtn);
             actionCell.appendChild(rejectBtn);
+            setDataLabel(actionCell, 'Action');
             row.appendChild(actionCell);
 
             tbody.appendChild(row);

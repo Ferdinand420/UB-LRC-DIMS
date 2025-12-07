@@ -1,6 +1,9 @@
 // Reservations page functionality
 let confirmCallback = null;
 
+// Utility to tag cells for responsive stacking
+const setDataLabel = (cell, label) => { if (cell) cell.setAttribute('data-label', label); };
+
 document.addEventListener('DOMContentLoaded', function() {
     // Two-step form elements
     const step1Form = document.getElementById('reservation-form-step1');
@@ -340,19 +343,23 @@ document.addEventListener('DOMContentLoaded', function() {
             if (showStudent) {
                 const studentCell = document.createElement('td');
                 studentCell.textContent = reservation.user_name || reservation.user_email;
+                setDataLabel(studentCell, 'Student');
                 row.appendChild(studentCell);
             }
 
             const roomCell = document.createElement('td');
             roomCell.textContent = reservation.room_name;
+            setDataLabel(roomCell, 'Room');
             row.appendChild(roomCell);
 
             const dateCell = document.createElement('td');
             dateCell.textContent = formatDate(reservation.reservation_date);
+            setDataLabel(dateCell, 'Date');
             row.appendChild(dateCell);
 
             const timeCell = document.createElement('td');
             timeCell.textContent = `${formatTime(reservation.start_time)} - ${formatTime(reservation.end_time)}`;
+            setDataLabel(timeCell, 'Time');
             row.appendChild(timeCell);
 
             const purposeCell = document.createElement('td');
@@ -361,6 +368,7 @@ document.addEventListener('DOMContentLoaded', function() {
             purposeCell.style.overflow = 'hidden';
             purposeCell.style.textOverflow = 'ellipsis';
             purposeCell.style.whiteSpace = 'nowrap';
+            setDataLabel(purposeCell, 'Purpose');
             row.appendChild(purposeCell);
 
             const statusCell = document.createElement('td');
@@ -368,6 +376,7 @@ document.addEventListener('DOMContentLoaded', function() {
             statusBadge.className = `status-badge status-${reservation.status}`;
             statusBadge.textContent = reservation.status.charAt(0).toUpperCase() + reservation.status.slice(1);
             statusCell.appendChild(statusBadge);
+            setDataLabel(statusCell, 'Status');
             row.appendChild(statusCell);
 
             // Add cancel button for students on pending/approved reservations
@@ -383,10 +392,12 @@ document.addEventListener('DOMContentLoaded', function() {
                     handleCancelReservation(reservation.id, reservation.room_name, reservation.reservation_date, reservation.start_time, reservation.end_time);
                 };
                 actionCell.appendChild(cancelBtn);
+                setDataLabel(actionCell, 'Action');
                 row.appendChild(actionCell);
             } else if (!showStudent) {
                 const actionCell = document.createElement('td');
                 actionCell.textContent = '-';
+                setDataLabel(actionCell, 'Action');
                 row.appendChild(actionCell);
             }
 

@@ -1,4 +1,7 @@
 // Feedback page functionality
+// Utility to tag cells for responsive stacking
+const setDataLabel = (cell, label) => { if (cell) cell.setAttribute('data-label', label); };
+
 document.addEventListener('DOMContentLoaded', function() {
     const form = document.getElementById('feedback-form');
     const messageDiv = document.getElementById('feedback-message');
@@ -79,12 +82,14 @@ document.addEventListener('DOMContentLoaded', function() {
             if (showStudent) {
                 const studentCell = document.createElement('td');
                 studentCell.textContent = feedback.user_name || feedback.user_email;
+                setDataLabel(studentCell, 'Student');
                 row.appendChild(studentCell);
             }
 
             const messageCell = document.createElement('td');
             messageCell.textContent = feedback.message;
             messageCell.style.maxWidth = '400px';
+            setDataLabel(messageCell, 'Feedback');
             row.appendChild(messageCell);
 
             const statusCell = document.createElement('td');
@@ -92,11 +97,13 @@ document.addEventListener('DOMContentLoaded', function() {
             statusBadge.className = `status-badge status-${feedback.status}`;
             statusBadge.textContent = feedback.status.charAt(0).toUpperCase() + feedback.status.slice(1);
             statusCell.appendChild(statusBadge);
+            setDataLabel(statusCell, 'Status');
             row.appendChild(statusCell);
 
             const dateCell = document.createElement('td');
             dateCell.textContent = formatDateTime(feedback.created_at);
             dateCell.style.whiteSpace = 'nowrap';
+            setDataLabel(dateCell, 'Date');
             row.appendChild(dateCell);
 
             tbody.appendChild(row);

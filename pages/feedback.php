@@ -41,7 +41,7 @@ require_login();
           Loading feedback...
         </div>
         <div id="feedback-container" style="display: none;">
-          <table id="feedback-table">
+          <table id="feedback-table" class="responsive-stack">
             <thead>
               <tr>
                 <?php if (is_librarian()): ?>

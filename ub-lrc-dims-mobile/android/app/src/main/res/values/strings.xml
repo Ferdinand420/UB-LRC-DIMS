@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">UB LRC DIMS</string>
+    <string name="title_activity_main">UB LRC DIMS</string>
+    <string name="package_name">com.ub.lrcdims</string>
+    <string name="custom_url_scheme">com.ub.lrcdims</string>
+</resources>

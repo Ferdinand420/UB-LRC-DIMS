@@ -108,7 +108,7 @@ require_login();
         <div id="reservations-loading" style="text-align: center; padding: 2rem; color: #999;">
           Loading reservations...
         </div>
-        <table id="reservation-table" style="display: none;">
+        <table id="reservation-table" class="responsive-stack" style="display: none;">
           <thead>
             <tr>
               <?php if (is_librarian()): ?>

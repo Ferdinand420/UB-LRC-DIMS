@@ -1130,3 +1130,15 @@ form label {
     background: var(--color-primary);
     color: #fff;
 }
+
+@media (max-width: 768px) {
+  .container { padding: 0 1rem; }
+  table { width: 100%; font-size: 0.95rem; }
+  th, td { padding: 0.6rem; }
+  /* Stack table rows as cards */
+  table.responsive-stack thead { display: none; }
+  table.responsive-stack tr { display: block; margin-bottom: 0.75rem; border: 1px solid #e5e7eb; border-radius: 8px; }
+  table.responsive-stack td { display: flex; justify-content: space-between; padding: 0.55rem 0.8rem; }
+  table.responsive-stack td::before { content: attr(data-label); font-weight: 600; color: #555; margin-right: 0.75rem; }
+  .btn { min-height: 44px; }
+}

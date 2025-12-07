@@ -27,7 +27,7 @@ if (!is_librarian()) { header('Location: dashboard.php'); exit; }
           Loading pending reservations...
         </div>
         <div id="approvals-container" style="display: none;">
-          <table>
+          <table class="responsive-stack">
             <thead>
               <tr>
                 <th>Student</th>
