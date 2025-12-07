@@ -18,13 +18,14 @@ $is_librarian = is_librarian();
 $type = $_GET['type'] ?? 'all'; // 'reservations', 'feedback', or 'all'
 
 $history = [];
+$reservationIds = [];
 
 // Get reservations
 if ($type === 'all' || $type === 'reservations') {
     if ($is_librarian) {
         $sql = "
             SELECT 'reservation' as type, r.id, r.reservation_date, r.start_time, r.end_time, 
-                   r.status, r.created_at, r.approved_at,
+                   r.status, r.created_at, r.approved_at, r.purpose,
                    rm.name as room_name,
                    u.full_name as user_name, u.email as user_email,
                    l.full_name as approved_by_name
@@ -32,15 +33,15 @@ if ($type === 'all' || $type === 'reservations') {
             JOIN rooms rm ON r.room_id = rm.id
             JOIN users u ON r.user_id = u.id
             LEFT JOIN users l ON r.approved_by = l.id
-            WHERE r.reservation_date < CURDATE() OR r.status IN ('rejected', 'cancelled')
+            WHERE r.status != 'pending'
             ORDER BY r.created_at DESC
             LIMIT 50
         ";
         $result = $conn->query($sql);
     } else {
         $sql = "
-            SELECT 'reservation' as type, r.id, r.reservation_date, r.start_time, r.end_time,
-                   r.status, r.created_at, r.approved_at,
+                 SELECT 'reservation' as type, r.id, r.reservation_date, r.start_time, r.end_time,
+                     r.status, r.created_at, r.approved_at, r.purpose,
                    rm.name as room_name
             FROM reservations r
             JOIN rooms rm ON r.room_id = rm.id
@@ -57,6 +58,7 @@ if ($type === 'all' || $type === 'reservations') {
 
     while ($row = $result->fetch_assoc()) {
         $history[] = $row;
+        $reservationIds[] = $row['id'];
     }
     
     if (isset($stmt)) $stmt->close();
@@ -94,6 +96,36 @@ if ($type === 'all' || $type === 'feedback') {
     }
     
     if (isset($stmt)) $stmt->close();
+}
+
+// Attach student IDs for reservations
+if (!empty($reservationIds)) {
+    $placeholders = implode(',', array_fill(0, count($reservationIds), '?'));
+    $types = str_repeat('i', count($reservationIds));
+    $stmt = $conn->prepare("SELECT reservation_id, student_id_value FROM reservation_students WHERE reservation_id IN ($placeholders)");
+    if ($stmt) {
+        $stmt->bind_param($types, ...$reservationIds);
+        $stmt->execute();
+        $res = $stmt->get_result();
+        $studentMap = [];
+        while ($row = $res->fetch_assoc()) {
+            $rid = $row['reservation_id'];
+            if (!isset($studentMap[$rid])) {
+                $studentMap[$rid] = [];
+            }
+            $studentMap[$rid][] = $row['student_id_value'];
+        }
+        $stmt->close();
+    } else {
+        $studentMap = [];
+    }
+
+    foreach ($history as &$item) {
+        if ($item['type'] === 'reservation') {
+            $item['students'] = $studentMap[$item['id']] ?? [];
+        }
+    }
+    unset($item);
 }
 
 // Sort by created_at descending

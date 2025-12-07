@@ -50,6 +50,16 @@ CREATE TABLE IF NOT EXISTS reservations (
     INDEX idx_date (reservation_date)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
+-- Reservation students table (stores all students occupying a reservation)
+CREATE TABLE IF NOT EXISTS reservation_students (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    reservation_id INT NOT NULL,
+    student_id_value VARCHAR(255) NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (reservation_id) REFERENCES reservations(id) ON DELETE CASCADE,
+    INDEX idx_reservation (reservation_id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
 -- Feedback table
 CREATE TABLE IF NOT EXISTS feedback (
     id INT AUTO_INCREMENT PRIMARY KEY,

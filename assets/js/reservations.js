@@ -245,19 +245,37 @@ document.addEventListener('DOMContentLoaded', function() {
                 },
                 body: JSON.stringify(formData)
             });
-
-            const data = await response.json();
+            let data;
+            try {
+                data = await response.json();
+            } catch (err) {
+                showMessage('Server error. Please try again.', 'error');
+                return;
+            }
 
             if (data.success) {
                 showMessage(data.message, 'success');
-                form.reset();
+                if (form) {
+                    form.reset();
+                } else {
+                    if (step1Form) {
+                        step1Form.reset();
+                        step1Form.style.display = 'grid';
+                    }
+                    if (step2Form) {
+                        step2Form.reset();
+                        step2Form.style.display = 'none';
+                    }
+                    if (studentIdsContainer) studentIdsContainer.innerHTML = '';
+                    if (step1Data) step1Data.dataset.values = '';
+                }
                 loadReservations(); // Refresh the list
             } else {
-                showMessage(data.message, 'error');
+                const msg = data.message || 'Submission failed. Please check your inputs and try again.';
+                showMessage(msg, 'error');
             }
         } catch (error) {
             showMessage('Error submitting reservation. Please try again.', 'error');
-            console.error('Error:', error);
         }
     }
 

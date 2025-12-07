@@ -45,9 +45,39 @@ if ($is_librarian) {
 $stmt->execute();
 $result = $stmt->get_result();
 $reservations = [];
+$reservationIds = [];
 
 while ($row = $result->fetch_assoc()) {
     $reservations[] = $row;
+    $reservationIds[] = $row['id'];
+}
+
+// Attach student IDs
+if (!empty($reservationIds)) {
+    $placeholders = implode(',', array_fill(0, count($reservationIds), '?'));
+    $types = str_repeat('i', count($reservationIds));
+    $stmt = $conn->prepare("SELECT reservation_id, student_id_value FROM reservation_students WHERE reservation_id IN ($placeholders)");
+    if ($stmt) {
+        $stmt->bind_param($types, ...$reservationIds);
+        $stmt->execute();
+        $res = $stmt->get_result();
+        $studentMap = [];
+        while ($row = $res->fetch_assoc()) {
+            $rid = $row['reservation_id'];
+            if (!isset($studentMap[$rid])) {
+                $studentMap[$rid] = [];
+            }
+            $studentMap[$rid][] = $row['student_id_value'];
+        }
+        $stmt->close();
+    } else {
+        $studentMap = [];
+    }
+
+    foreach ($reservations as &$item) {
+        $item['students'] = $studentMap[$item['id']] ?? [];
+    }
+    unset($item);
 }
 
 $stmt->close();

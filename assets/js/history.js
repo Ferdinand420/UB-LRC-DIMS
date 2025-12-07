@@ -95,12 +95,21 @@ function displayHistory(history) {
 
         if (item.type === 'reservation') {
             const statusBadge = `<span class="status-badge status-${item.status}">${item.status.charAt(0).toUpperCase() + item.status.slice(1)}</span>`;
+            const students = Array.isArray(item.students) ? item.students : [];
+            const studentsMarkup = students.length
+                ? `<ul style="margin: 0.35rem 0 0; padding-left: 1.25rem; color: #444;">${students.map(s => `<li>${s}</li>`).join('')}</ul>`
+                : '<p style="margin: 0.35rem 0 0; color: #666;">No student IDs recorded.</p>';
+            
+            const approvalInfo = item.approved_by_name && item.approved_at
+                ? `<div style="font-size: 0.813rem; color: #666; margin-top: 0.35rem;">Approved by: ${item.approved_by_name} on ${formatDateTime(item.approved_at)}</div>`
+                : '';
             
             itemDiv.innerHTML = `
                 <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 0.5rem;">
                     <div>
                         <strong style="color: var(--color-primary);">📅 Reservation</strong>
                         ${item.user_name ? `<br><small style="color: #666;">Student: ${item.user_name}</small>` : ''}
+                        ${item.user_email ? `<br><small style="color: #666;">Email: ${item.user_email}</small>` : ''}
                     </div>
                     <div style="display: flex; gap: 0.5rem; align-items: center;">
                         ${statusBadge}
@@ -111,9 +120,15 @@ function displayHistory(history) {
                     <strong>${item.room_name}</strong><br>
                     <small>${formatDate(item.reservation_date)} • ${formatTime(item.start_time)} - ${formatTime(item.end_time)}</small>
                 </div>
-                ${item.approved_by_name ? `<div style="font-size: 0.813rem; color: #666;">Processed by: ${item.approved_by_name}</div>` : ''}
+                ${approvalInfo}
                 <div style="font-size: 0.75rem; color: #999; margin-top: 0.5rem;">
                     ${formatDateTime(item.created_at)}
+                </div>
+                <div class="reservation-details" style="display: none; margin-top: 0.75rem; padding: 0.75rem; background: #f8fafc; border: 1px solid var(--color-border); border-radius: var(--radius-sm);">
+                    <div style="margin-bottom: 0.5rem; font-weight: 600; color: #333;">Reservation Details</div>
+                    <p style="margin: 0 0 0.35rem; color: #444;"><strong>Purpose:</strong> ${item.purpose || 'N/A'}</p>
+                    <p style="margin: 0 0 0.35rem; color: #444;"><strong>Students:</strong></p>
+                    ${studentsMarkup}
                 </div>
             `;
         } else if (item.type === 'feedback') {
@@ -160,12 +175,14 @@ function displayHistory(history) {
         timelineElement.appendChild(itemDiv);
     });
 
-    // Add event listeners to view buttons
+    // Add event listeners to view buttons (toggle details)
     document.querySelectorAll('.view-reservation-btn').forEach(btn => {
         btn.addEventListener('click', function() {
-            const reservationId = this.dataset.reservationId;
-            // Navigate to reservations page with reservation details modal
-            window.location.href = `reservations.php?view=${reservationId}`;
+            const details = this.closest('.history-item').querySelector('.reservation-details');
+            if (!details) return;
+            const isOpen = details.style.display === 'block';
+            details.style.display = isOpen ? 'none' : 'block';
+            this.textContent = isOpen ? 'View' : 'Hide';
         });
     });
 }

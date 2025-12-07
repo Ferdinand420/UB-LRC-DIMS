@@ -11,6 +11,7 @@ START TRANSACTION;
 DELETE FROM waitlist;
 DELETE FROM violations;
 DELETE FROM feedback;
+DELETE FROM reservation_students;
 DELETE FROM reservations;
 DELETE FROM rooms;
 DELETE FROM users;
@@ -22,6 +23,7 @@ ALTER TABLE reservations AUTO_INCREMENT = 1;
 ALTER TABLE feedback AUTO_INCREMENT = 1;
 ALTER TABLE violations AUTO_INCREMENT = 1;
 ALTER TABLE waitlist AUTO_INCREMENT = 1;
+ALTER TABLE reservation_students AUTO_INCREMENT = 1;
 
 -- Insert test users (password for all: password123)
 INSERT INTO users (email, password_hash, role, full_name) VALUES
@@ -60,6 +62,24 @@ INSERT INTO reservations (user_id, room_id, reservation_date, start_time, end_ti
 (4, 1, '2025-11-25', '09:00:00', '11:00:00', 'Personal study time', 'rejected', 6, '2025-11-24 16:00:00'),
 -- Cancelled reservation
 (5, 2, '2025-11-26', '14:00:00', '16:00:00', 'Team meeting - cancelled by student', 'cancelled', NULL, NULL);
+
+-- Insert reservation students (sample student ID lists)
+INSERT INTO reservation_students (reservation_id, student_id_value) VALUES
+(1, '2021001'), (1, '2021002'), (1, '2021003'),
+(2, '2022001'), (2, '2022002'), (2, '2022003'), (2, '2022004'),
+(3, '2023001'), (3, '2023002'),
+(4, '2024001'), (4, '2024002'), (4, '2024003'),
+(5, '2025001'), (5, '2025002'), (5, '2025003'), (5, '2025004'), (5, '2025005'),
+(6, '2026001'), (6, '2026002'), (6, '2026003'),
+(7, '2027001'), (7, '2027002'),
+(8, '2028001'), (8, '2028002'), (8, '2028003'),
+(9, '2029001'), (9, '2029002'), (9, '2029003'), (9, '2029004'),
+(10, '2030001'), (10, '2030002'), (10, '2030003'),
+(11, '2031001'),
+(12, '2032001'), (12, '2032002'),
+(13, '2033001'), (13, '2033002'), (13, '2033003'),
+(14, '2034001'), (14, '2034002'),
+(15, '2035001'), (15, '2035002'), (15, '2035003');
 
 -- Insert feedback with various statuses
 INSERT INTO feedback (user_id, message, status) VALUES
