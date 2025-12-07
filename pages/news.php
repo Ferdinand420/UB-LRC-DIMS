@@ -17,27 +17,37 @@
       </div>
     </div>
   </div>
-  <main class="main-content" style="background:#fff; margin:2rem auto; max-width:1180px; border-radius:12px; padding:2rem; box-shadow:0 4px 18px rgba(0,0,0,0.08);">
+  <main class="main-content" style="background:#fff; margin:2rem auto; max-width:1180px; border-radius:12px; padding:2rem; box-shadow:0 4px 18px rgba(0,0,0,0.08); display:flex; flex-direction:column; min-height:400px;">
     <h1 style="margin-top:0;">News & Updates</h1>
-    <p class="lead" style="font-weight:600; color:var(--color-primary);">Latest announcements and library resource highlights.</p>
-    <section style="margin-top:1.75rem; display:grid; gap:1.5rem; grid-template-columns:repeat(auto-fit,minmax(260px,1fr));">
-      <article class="card" style="text-align:left;">
-        <h3>New Discussion Rooms</h3>
-        <p style="font-weight:400;">Additional rooms have been added for group collaboration. Booking now open.</p>
-      </article>
-      <article class="card" style="text-align:left;">
-        <h3>Extended Hours</h3>
-        <p style="font-weight:400;">Library hours extended until 9 PM during exam week.</p>
-      </article>
-      <article class="card" style="text-align:left;">
-        <h3>Digital Archive Pilot</h3>
-        <p style="font-weight:400;">Access preliminary collections in our new digital archive interface.</p>
-      </article>
-    </section>
-    <div style="margin-top:2.5rem; text-align:center;">
+    <div id="news-container" style="margin-top:1.75rem; flex:1;">
+      <!-- News content will be populated here -->
+    </div>
+    <div style="margin-top:auto; text-align:center;">
       <a href="../index.php" class="btn btn-primary">Back to Home</a>
     </div>
   </main>
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      const newsContainer = document.getElementById('news-container');
+      const news = []; // Empty array - no news to display
+      
+      if (news.length === 0) {
+        newsContainer.innerHTML = '<div style="text-align:center; padding:2rem; color:#999;"><p style="font-size:1.1rem;">There is no news.</p></div>';
+      } else {
+        // Future: Render news items here
+        const newsGrid = document.createElement('section');
+        newsGrid.style.cssText = 'display:grid; gap:1.5rem; grid-template-columns:repeat(auto-fit,minmax(260px,1fr));';
+        news.forEach(item => {
+          const article = document.createElement('article');
+          article.className = 'card';
+          article.style.textAlign = 'left';
+          article.innerHTML = `<h3>${item.title}</h3><p style="font-weight:400;">${item.content}</p>`;
+          newsGrid.appendChild(article);
+        });
+        newsContainer.appendChild(newsGrid);
+      }
+    });
+  </script>
   <!-- Login Modals -->
   <div class="login-modal" id="student-modal" aria-hidden="true" role="dialog" aria-labelledby="studentModalTitle">
     <div class="login-modal-dialog">

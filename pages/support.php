@@ -18,31 +18,32 @@
     </div>
   </div>
   <main class="main-content" style="background:#fff; margin:2rem auto; max-width:1000px; border-radius:12px; padding:2rem 2.25rem; box-shadow:0 4px 18px rgba(0,0,0,0.08);">
-    <h1 style="margin-top:0;">Support & Help</h1>
-    <p class="lead" style="font-weight:600; color:var(--color-primary);">Find assistance, contact info, and common answers.</p>
-    <section style="margin-top:1.75rem; display:grid; gap:1.75rem; grid-template-columns:repeat(auto-fit,minmax(300px,1fr));">
-      <div style="background:var(--color-surface); padding:1.25rem 1.1rem; border-radius:10px; box-shadow:var(--shadow-sm);">
-        <h3 style="margin-top:0; color:var(--color-primary);">Contact</h3>
-        <p>Email: <a href="mailto:lrc-support@ub.edu.ph" style="color:var(--color-primary); font-weight:600;">lrc-support@ub.edu.ph</a></p>
-        <p>Phone: (043) 000-1234</p>
-        <p>Desk Hours: 8:00 AM – 5:00 PM</p>
-      </div>
-      <div style="background:var(--color-surface); padding:1.25rem 1.1rem; border-radius:10px; box-shadow:var(--shadow-sm);">
-        <h3 style="margin-top:0; color:var(--color-primary);">FAQ</h3>
-        <ul style="padding-left:1.1rem; margin:0; line-height:1.5;">
-          <li>How do I reserve a room?</li>
-          <li>What is my UB Mail format?</li>
-          <li>How can I reset my password?</li>
-          <li>Who approves reservations?</li>
-        </ul>
-      </div>
-      <div style="background:var(--color-surface); padding:1.25rem 1.1rem; border-radius:10px; box-shadow:var(--shadow-sm);">
-        <h3 style="margin-top:0; color:var(--color-primary);">Guides</h3>
-        <p>Room Reservation Walkthrough (PDF)</p>
-        <p>Student Collaboration Policy</p>
-        <p>Digital Archive Access Steps</p>
-      </div>
-    </section>
+    <h1 style="margin-top:0;">Need Help Using UB LRC-DIMS?</h1>
+    <p class="lead" style="font-weight:600; color:var(--color-primary);">We're here to make your experience smooth and stress-free. Whether you're booking a room or troubleshooting an issue, this page has you covered.</p>
+    
+    <h2 style="margin-top:2rem; color:var(--color-primary);">Getting Started</h2>
+    <ul style="line-height:1.8;">
+      <li><strong>How to Log In:</strong> Use your UB email to access the system securely.</li>
+      <li><strong>Booking a Room:</strong> Check real-time availability and reserve a slot with just a few clicks.</li>
+    </ul>
+
+    <h2 style="margin-top:2rem; color:var(--color-primary);">FAQs</h2>
+    <div style="line-height:1.8;">
+      <p><strong>Q: What happens if I miss my check-in time?</strong><br>A: Your slot will be released to the next person on the waitlist automatically.</p>
+      <p><strong>Q: How can I check my reservation status?</strong><br>A: You can view your active and pending reservations. Full history is accessible only to librarians.</p>
+      <p><strong>Q: Who can I contact for technical issues?</strong><br>A: Reach out to the LRC staff or email us at support@ubdims.edu.ph.</p>
+    </div>
+
+    <h2 style="margin-top:2rem; color:var(--color-primary);">Troubleshooting Tips</h2>
+    <ul style="line-height:1.8;">
+      <li>If the page doesn't load, check your internet connection.</li>
+      <li>Make sure your UB email is active and verified.</li>
+      <li>For QR code issues, try refreshing or using a different device.</li>
+    </ul>
+
+    <h2 style="margin-top:2rem; color:var(--color-primary);">Contact Us</h2>
+    <p>Need more help? Visit the LRC front desk or email us. We're happy to assist!</p>
+
     <div style="margin-top:2.25rem; text-align:center;">
       <a href="../index.php" class="btn btn-primary">Back to Home</a>
     </div>

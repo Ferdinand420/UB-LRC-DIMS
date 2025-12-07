@@ -2,6 +2,16 @@
 let confirmCallback = null;
 
 document.addEventListener('DOMContentLoaded', function() {
+    // Two-step form elements
+    const step1Form = document.getElementById('reservation-form-step1');
+    const step2Form = document.getElementById('reservation-form-step2');
+    const studentIdsContainer = document.getElementById('student-ids-container');
+    const step1Data = document.getElementById('step1-data');
+    const nextBtnStep1 = document.getElementById('next-btn-step1');
+    const cancelBtnStep1 = document.getElementById('cancel-btn-step1');
+    const cancelBtnStep2 = document.getElementById('cancel-btn-step2');
+    
+    // Legacy form element (kept for compatibility)
     const form = document.getElementById('reservation-form');
     const roomSelect = document.getElementById('room');
     const dateInput = document.getElementById('date');
@@ -38,6 +48,132 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
 
+    // ============ TWO-STEP FORM HANDLERS ============
+    if (step1Form && step2Form && nextBtnStep1) {
+        // Load rooms for step 1
+        loadRooms();
+        
+        // Next button: validate step 1 and transition to step 2
+        nextBtnStep1.addEventListener('click', function(e) {
+            e.preventDefault();
+            if (!step1Form.checkValidity()) {
+                step1Form.reportValidity();
+                return;
+            }
+            
+            const capacity = parseInt(document.getElementById('capacity').value);
+            if (!capacity || capacity < 1) {
+                alert('Please enter a valid number of students');
+                return;
+            }
+            
+            // Store step 1 data
+            const step1Values = {
+                email: document.getElementById('email').value,
+                date: document.getElementById('date').value,
+                room_id: document.getElementById('room').value,
+                room_name: document.getElementById('room').options[document.getElementById('room').selectedIndex].text,
+                purpose: document.getElementById('purpose').value,
+                start_time: document.getElementById('start-time').value,
+                end_time: document.getElementById('end-time').value,
+                capacity: capacity
+            };
+            step1Data.dataset.values = JSON.stringify(step1Values);
+            
+            // Generate student ID fields for step 2
+            generateStudentIdFields(capacity);
+            
+            // Transition to step 2
+            step1Form.style.display = 'none';
+            step2Form.style.display = 'grid';
+        });
+        
+        // Cancel button on step 1
+        cancelBtnStep1.addEventListener('click', function(e) {
+            e.preventDefault();
+            step1Form.reset();
+            if (messageDiv) messageDiv.style.display = 'none';
+        });
+        
+        // Cancel button on step 2
+        cancelBtnStep2.addEventListener('click', function(e) {
+            e.preventDefault();
+            // Go back to step 1
+            step1Form.style.display = 'grid';
+            step2Form.style.display = 'none';
+            studentIdsContainer.innerHTML = '';
+            step1Data.dataset.values = '';
+        });
+        
+        // Submit button on step 2
+        step2Form.addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            // Collect student IDs
+            const studentIds = [];
+            const inputs = studentIdsContainer.querySelectorAll('input[name^="student_id_"]');
+            inputs.forEach(input => {
+                if (input.value.trim()) {
+                    studentIds.push(input.value.trim());
+                }
+            });
+            
+            if (studentIds.length === 0) {
+                showMessage('Please enter at least one student ID', 'error');
+                return;
+            }
+            
+            // Retrieve and merge step 1 data
+            const step1Values = JSON.parse(step1Data.dataset.values || '{}');
+            const formData = {
+                room_id: parseInt(step1Values.room_id),
+                reservation_date: step1Values.date,
+                start_time: step1Values.start_time,
+                end_time: step1Values.end_time,
+                purpose: step1Values.purpose,
+                student_ids: studentIds
+            };
+            
+            // Show confirmation modal
+            const timeStr = `${formatTime(formData.start_time)} - ${formatTime(formData.end_time)}`;
+            showConfirmModal(
+                'Confirm Reservation',
+                `Reserve ${step1Values.room_name} on ${formatDate(formData.reservation_date)} from ${timeStr}? (${studentIds.length} student${studentIds.length > 1 ? 's' : ''})`,
+                async function() {
+                    await submitReservation(formData);
+                }
+            );
+        });
+    }
+
+    function generateStudentIdFields(capacity) {
+        studentIdsContainer.innerHTML = '';
+        const heading = document.createElement('div');
+        heading.style.cssText = 'margin-bottom: 0.75rem; font-weight: 600;';
+        heading.textContent = `Enter ${capacity} Student ID(s)`;
+        studentIdsContainer.appendChild(heading);
+        
+        for (let i = 1; i <= capacity; i++) {
+            const div = document.createElement('div');
+            div.style.cssText = 'display: grid; grid-template-columns: 150px 1fr; align-items: center; gap: 0.75rem;';
+            
+            const label = document.createElement('label');
+            label.style.margin = '0';
+            label.textContent = `Student ${i}`;
+            
+            const input = document.createElement('input');
+            input.type = 'text';
+            input.name = `student_id_${i}`;
+            input.placeholder = `Student ${i} ID`;
+            input.style.marginBottom = '0';
+            input.required = true;
+            
+            div.appendChild(label);
+            div.appendChild(input);
+            studentIdsContainer.appendChild(div);
+        }
+    }
+
     function showConfirmModal(title, message, callback) {
         modalTitle.textContent = title;
         modalMessage.textContent = message;
@@ -55,15 +191,11 @@ document.addEventListener('DOMContentLoaded', function() {
         dateInput.setAttribute('min', today);
     }
 
-    // Load available rooms
-    if (roomSelect) {
-        loadRooms();
-    }
-
     // Load existing reservations
     loadReservations();
 
-    // Handle cancel button
+    // ============ LEGACY FORM HANDLERS (if old form is still used) ============
+    // Handle cancel button for legacy form
     const cancelBtn = document.getElementById('cancel-btn');
     if (cancelBtn) {
         cancelBtn.addEventListener('click', function() {
@@ -76,8 +208,8 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
-    // Handle form submission
-    if (form) {
+    // Handle legacy form submission
+    if (form && !step1Form) {
         form.addEventListener('submit', async function(e) {
             e.preventDefault();
             
@@ -90,7 +222,7 @@ document.addEventListener('DOMContentLoaded', function() {
             };
 
             // Show confirmation modal
-            const roomName = roomSelect.options[roomSelect.selectedIndex].text; // includes capacity in text
+            const roomName = roomSelect.options[roomSelect.selectedIndex].text;
             const dateStr = formatDate(formData.reservation_date);
             const timeStr = `${formatTime(formData.start_time)} - ${formatTime(formData.end_time)}`;
             
@@ -139,7 +271,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 data.rooms.forEach(room => {
                     const option = document.createElement('option');
                     option.value = room.id;
-                    option.textContent = `${room.name} (Capacity: ${room.capacity})`;
+                    option.textContent = room.name;
                     if (room.status === 'maintenance') {
                         option.disabled = true;
                         option.textContent += ' - Under Maintenance';
@@ -194,8 +326,7 @@ document.addEventListener('DOMContentLoaded', function() {
             }
 
             const roomCell = document.createElement('td');
-            const cap = reservation.capacity != null ? ` (Cap: ${reservation.capacity})` : '';
-            roomCell.textContent = reservation.room_name + cap;
+            roomCell.textContent = reservation.room_name;
             row.appendChild(roomCell);
 
             const dateCell = document.createElement('td');

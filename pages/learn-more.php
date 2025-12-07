@@ -18,32 +18,37 @@
     </div>
   </div>
   <main class="main-content" style="background:#fff; margin:2rem auto; max-width:1100px; border-radius:12px; padding:2.25rem 2.5rem; box-shadow:0 4px 18px rgba(0,0,0,0.08);">
-    <h1 style="margin-top:0;">About UB LRC-DIMS</h1>
-    <p class="lead" style="font-weight:600; color:var(--color-primary);">A centralized platform for discussion space management, reservations, and resource access.</p>
-    <section style="margin-top:2rem; display:grid; gap:2rem; grid-template-columns:repeat(auto-fit,minmax(280px,1fr));">
-      <div style="background:var(--color-surface); padding:1.25rem 1.1rem; border-radius:10px; box-shadow:var(--shadow-sm);">
-        <h3 style="margin:0 0 .5rem; color:var(--color-primary);">Key Features</h3>
-        <ul style="padding-left:1.1rem; margin:0; line-height:1.55;">
-          <li>Room & resource reservations</li>
-          <li>Approval workflow for librarians</li>
-          <li>Feedback submission</li>
-          <li>Usage statistics dashboard</li>
-        </ul>
-      </div>
-      <div style="background:var(--color-surface); padding:1.25rem 1.1rem; border-radius:10px; box-shadow:var(--shadow-sm);">
-        <h3 style="margin:0 0 .5rem; color:var(--color-primary);">Benefits</h3>
-        <p style="margin:0 0 .5rem;">Improves transparency in room allocation and streamlines librarian approvals.</p>
-        <p style="margin:0;">Enhances student collaboration with clear scheduling and status updates.</p>
-      </div>
-      <div style="background:var(--color-surface); padding:1.25rem 1.1rem; border-radius:10px; box-shadow:var(--shadow-sm);">
-        <h3 style="margin:0 0 .5rem; color:var(--color-primary);">Roadmap</h3>
-        <ul style="padding-left:1.1rem; margin:0; line-height:1.55;">
-          <li>Single Sign-On integration</li>
-          <li>Automated email notifications</li>
-          <li>Digital archive search</li>
-        </ul>
-      </div>
-    </section>
+    <h1 style="margin-top:0;">What is UB LRC-DIMS?</h1>
+    <p class="lead" style="font-weight:600; color:var(--color-primary);">UB LRC-DIMS stands for University of Batangas Learning Resource Center – Discussion Integrated Management System. It's a smart, student-centered platform designed to make discussion room reservations easier, faster, and fairer.</p>
+
+    <h2 style="margin-top:2rem; color:var(--color-primary);">Why We Built It</h2>
+    <p>The old manual sign-in system was slow and prone to errors. Students couldn't see room availability in real time, and staff had to manage everything by hand. UB LRC-DIMS solves these problems with automation, transparency, and real-time updates.</p>
+
+    <h2 style="margin-top:2rem; color:var(--color-primary);">Key Features</h2>
+    <ul style="line-height:1.8;">
+      <li>Real-Time Room Availability</li>
+      <li>Secure Login via UB Email</li>
+      <li>Reservation History</li>
+      <li>Feedback Submission</li>
+      <li>Auto-Cancellation & Waitlisting</li>
+    </ul>
+
+    <h2 style="margin-top:2rem; color:var(--color-primary);">Who Benefits</h2>
+    <ul style="line-height:1.8;">
+      <li><strong>Students:</strong> No more waiting or guessing—just book and go.</li>
+      <li><strong>LRC Staff:</strong> Less paperwork, more time to support students.</li>
+      <li><strong>UB Admin:</strong> Access to usage data for better planning and policy-making.</li>
+    </ul>
+
+    <h2 style="margin-top:2rem; color:var(--color-primary);">Rules</h2>
+    <ul style="line-height:1.8;">
+      <li>Strictly maximum of 10 students</li>
+      <li>No food or beverages allowed</li>
+    </ul>
+
+    <h2 style="margin-top:2rem; color:var(--color-primary);">Built with Purpose</h2>
+    <p>This system was developed by UB students using Agile methodology, with input from real users—students, librarians, and staff. It's designed to grow with your needs and reflect UB's commitment to innovation.</p>
+
     <div style="margin-top:2.5rem; text-align:center;">
       <a href="../index.php" class="btn btn-primary">Back to Home</a>
     </div>

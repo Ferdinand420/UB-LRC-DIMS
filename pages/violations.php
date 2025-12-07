@@ -38,31 +38,6 @@ if (!is_librarian()) { header('Location: dashboard.php'); exit; }
           <button type="submit" class="btn btn-primary">Log Violation</button>
         </form>
       </div>
-      <div class="card" style="margin-top:1.75rem;">
-        <h3>Violation Records</h3>
-        <div id="violations-loading" style="text-align: center; padding: 2rem; color: #999;">
-          Loading violations...
-        </div>
-        <div id="violations-container" style="display: none;">
-          <table>
-            <thead>
-              <tr>
-                <th>Student</th>
-                <th>Room</th>
-                <th>Description</th>
-                <th>Logged By</th>
-                <th>Date</th>
-              </tr>
-            </thead>
-            <tbody id="violations-tbody">
-              <!-- Populated via JavaScript -->
-            </tbody>
-          </table>
-        </div>
-        <div id="no-violations" style="display: none; text-align: center; padding: 2rem; color: #999;">
-          No violations recorded.
-        </div>
-      </div>
     </main>
   </div>
   <footer class="landing-footer">&copy; <?php echo date('Y'); ?> UB LRC-DIMS.</footer>

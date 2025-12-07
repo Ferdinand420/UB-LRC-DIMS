@@ -27,6 +27,7 @@ require_login();
           <button onclick="filterHistory('all')" class="btn btn-primary" id="filter-all">All</button>
           <button onclick="filterHistory('reservations')" class="btn btn-primary" id="filter-reservations">Reservations</button>
           <button onclick="filterHistory('feedback')" class="btn btn-primary" id="filter-feedback">Feedback</button>
+          <button onclick="filterHistory('violations')" class="btn btn-primary" id="filter-violations">Violations</button>
         </div>
       </div>
 
@@ -34,13 +35,13 @@ require_login();
       <div class="card" style="margin-top: 1.5rem;">
         <h3>Activity Timeline</h3>
         <div id="history-loading" style="text-align: center; padding: 2rem; color: #999;">
-          Loading history...
+          Loading activity...
         </div>
         <div id="history-timeline" style="display: none; margin-top: 1rem;">
           <!-- Populated via JavaScript -->
         </div>
         <div id="no-history" style="display: none; text-align: center; padding: 2rem; color: #999;">
-          No history found.
+          No activity found.
         </div>
       </div>
     </main>
@@ -48,5 +49,6 @@ require_login();
   <footer class="landing-footer">&copy; <?php echo date('Y'); ?> UB LRC-DIMS.</footer>
   <script src="../assets/js/sidebar.js"></script>
   <script src="../assets/js/history.js"></script>
+  <script src="../assets/js/violations.js"></script>
 </body>
 </html>

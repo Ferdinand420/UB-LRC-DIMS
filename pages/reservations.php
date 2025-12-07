@@ -27,63 +27,78 @@ require_login();
       <div class="card" style="max-width: 900px; margin: 0 auto;">
         <h3 style="margin-bottom: 1.5rem;">New Reservation</h3>
         <div id="form-message"></div>
-        <form id="reservation-form" style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem 1.5rem;">
-          <div style="display: flex; flex-direction: column; gap: 0.75rem;">
-            <div style="display: grid; grid-template-columns: 100px 1fr; align-items: center; gap: 0.75rem;">
-              <label for="student-id" style="margin: 0;">Student ID</label>
-              <input type="text" id="student-id" name="student_id" placeholder="Enter your student ID" required style="margin-bottom: 0;">
-            </div>
-
-            <div style="display: grid; grid-template-columns: 100px 1fr; align-items: center; gap: 0.75rem;">
-              <label for="full-name" style="margin: 0;">Full Name</label>
-              <input type="text" id="full-name" name="full_name" placeholder="Enter your full name" required style="margin-bottom: 0;">
-            </div>
-
-            <div style="display: grid; grid-template-columns: 100px 1fr; align-items: center; gap: 0.75rem;">
-              <label for="email" style="margin: 0;">UB Mail</label>
-              <input type="email" id="email" name="email" placeholder="your.email@ub.edu.ph" required style="margin-bottom: 0;">
-            </div>
-
-            <div style="display: grid; grid-template-columns: 100px 1fr; align-items: center; gap: 0.75rem;">
-              <label for="password" style="margin: 0;">Password</label>
-              <input type="password" id="password" name="password" placeholder="Enter your password" required style="margin-bottom: 0;">
-            </div>
+        
+        <!-- Step 1: Room & Capacity Selection -->
+        <form id="reservation-form-step1" style="display: grid; grid-template-columns: 1fr; gap: 0.75rem;">
+          <div style="display: grid; grid-template-columns: 150px 1fr; align-items: center; gap: 0.75rem;">
+            <label for="email" style="margin: 0;">UB Mail</label>
+            <input type="email" id="email" name="email" placeholder="your.email@ub.edu.ph" required style="margin-bottom: 0;">
           </div>
 
-          <div style="display: flex; flex-direction: column; gap: 0.75rem;">
-            <div style="display: grid; grid-template-columns: 100px 1fr; align-items: center; gap: 0.75rem;">
-              <label for="date" style="margin: 0;">Date</label>
-              <input type="date" id="date" name="reservation_date" required style="margin-bottom: 0;">
-            </div>
-
-            <div style="display: grid; grid-template-columns: 100px 1fr; align-items: center; gap: 0.75rem;">
-              <label for="room" style="margin: 0;">Room</label>
-              <select id="room" name="room_id" required style="margin-bottom: 0; width: 100%;">
-                <option value="">Select a room...</option>
-              </select>
-            </div>
-
-            <div style="display: grid; grid-template-columns: 100px 1fr; align-items: center; gap: 0.75rem;">
-              <label for="purpose" style="margin: 0;">Purpose</label>
-              <textarea id="purpose" name="purpose" rows="3" placeholder="Brief description of your reservation purpose..." required style="margin-bottom: 0; resize: vertical;"></textarea>
-            </div>
-
-            <div style="display: grid; grid-template-columns: 100px 1fr; align-items: center; gap: 0.75rem;">
-              <label for="start-time" style="margin: 0;">Start Time</label>
-              <input type="time" id="start-time" name="start_time" required style="margin-bottom: 0;">
-            </div>
-
-            <div style="display: grid; grid-template-columns: 100px 1fr; align-items: center; gap: 0.75rem;">
-              <label for="end-time" style="margin: 0;">End Time</label>
-              <input type="time" id="end-time" name="end_time" required style="margin-bottom: 0;">
-            </div>
+          <div style="display: grid; grid-template-columns: 150px 1fr; align-items: center; gap: 0.75rem;">
+            <label for="date" style="margin: 0;">Date</label>
+            <input type="date" id="date" name="reservation_date" required style="margin-bottom: 0;">
           </div>
 
-          <div style="grid-column: 1 / -1; display: flex; gap: 0.75rem; margin-top: 1rem; justify-content: flex-end;">
-            <button type="button" class="btn" id="cancel-btn" style="padding: 0.6rem 2rem; background: var(--color-primary); color: #fff; border: none; transition: background 0.2s;" onmouseover="this.style.background='var(--color-primary-dark)'" onmouseout="this.style.background='var(--color-primary)'">Cancel</button>
-            <button type="submit" class="btn btn-primary" style="padding: 0.6rem 2rem; background: var(--color-gold); color: var(--color-primary-dark); transition: background 0.2s;" onmouseover="this.style.background='#d89640'" onmouseout="this.style.background='var(--color-gold)'">Submit</button>
+          <div style="display: grid; grid-template-columns: 150px 1fr; align-items: center; gap: 0.75rem;">
+            <label for="room" style="margin: 0;">Room</label>
+            <select id="room" name="room_id" required style="margin-bottom: 0; width: 100%;">
+              <option value="">Select a room...</option>
+            </select>
+          </div>
+
+          <div style="display: grid; grid-template-columns: 150px 1fr; align-items: center; gap: 0.75rem;">
+            <label for="capacity" style="margin: 0;">Number of Students</label>
+            <select id="capacity" name="capacity" required style="margin-bottom: 0; width: 100%;">
+              <option value="">Select number of students...</option>
+              <option value="1">1</option>
+              <option value="2">2</option>
+              <option value="3">3</option>
+              <option value="4">4</option>
+              <option value="5">5</option>
+              <option value="6">6</option>
+              <option value="7">7</option>
+              <option value="8">8</option>
+              <option value="9">9</option>
+              <option value="10">10</option>
+            </select>
+          </div>
+
+          <div style="display: grid; grid-template-columns: 150px 1fr; align-items: center; gap: 0.75rem;">
+            <label for="purpose" style="margin: 0;">Purpose</label>
+            <textarea id="purpose" name="purpose" rows="3" placeholder="Brief description of your reservation purpose..." required style="margin-bottom: 0; resize: vertical;"></textarea>
+          </div>
+
+          <div style="display: grid; grid-template-columns: 150px 1fr; align-items: center; gap: 0.75rem;">
+            <label for="start-time" style="margin: 0;">Start Time</label>
+            <input type="time" id="start-time" name="start_time" required style="margin-bottom: 0;">
+          </div>
+
+          <div style="display: grid; grid-template-columns: 150px 1fr; align-items: center; gap: 0.75rem;">
+            <label for="end-time" style="margin: 0;">End Time</label>
+            <input type="time" id="end-time" name="end_time" required style="margin-bottom: 0;">
+          </div>
+
+          <div style="display: flex; gap: 0.75rem; margin-top: 1rem; justify-content: flex-end;">
+            <button type="button" class="btn" id="cancel-btn-step1" style="padding: 0.6rem 2rem; background: var(--color-primary); color: #fff; border: none; transition: background 0.2s;">Cancel</button>
+            <button type="button" class="btn" id="next-btn-step1" style="padding: 0.6rem 2rem; background: var(--color-gold); color: var(--color-primary-dark); transition: background 0.2s;">Next</button>
           </div>
         </form>
+
+        <!-- Step 2: Student IDs (hidden initially) -->
+        <form id="reservation-form-step2" style="display: none; gap: 0.75rem;">
+          <div id="student-ids-container" style="display: flex; flex-direction: column; gap: 0.75rem;">
+            <!-- Dynamically populated based on capacity -->
+          </div>
+
+          <div style="display: flex; gap: 0.75rem; margin-top: 1rem; justify-content: flex-end;">
+            <button type="button" class="btn" id="cancel-btn-step2" style="padding: 0.6rem 2rem; background: var(--color-primary); color: #fff; border: none; transition: background 0.2s;">Cancel</button>
+            <button type="submit" class="btn" id="submit-btn-step2" style="padding: 0.6rem 2rem; background: var(--color-gold); color: var(--color-primary-dark); transition: background 0.2s;">Submit</button>
+          </div>
+        </form>
+
+        <!-- Hidden data store for step1 values -->
+        <div id="step1-data" style="display: none;"></div>
       </div>
       <?php endif; ?>
 

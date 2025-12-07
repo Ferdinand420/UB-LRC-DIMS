@@ -25,11 +25,40 @@ async function loadHistory(type = 'all') {
     noDataElement.style.display = 'none';
 
     try {
-        const response = await fetch(`../api/get_history.php?type=${type}`);
-        const data = await response.json();
-
-        if (data.success && data.history) {
-            displayHistory(data.history);
+        let allItems = [];
+        
+        // Fetch history (reservations, feedback)
+        const historyResponse = await fetch(`../api/get_history.php?type=${type}`);
+        const historyData = await historyResponse.json();
+        if (historyData.success && historyData.history) {
+            allItems = allItems.concat(historyData.history);
+        }
+        
+        // Fetch violations if type is 'all' or 'violations'
+        if (type === 'all' || type === 'violations') {
+            const violationsResponse = await fetch('../api/get_violations.php');
+            const violationsData = violationsResponse.ok ? await violationsResponse.json() : { success: false };
+            if (violationsData.success && violationsData.violations) {
+                const violationItems = violationsData.violations.map(v => ({
+                    ...v,
+                    type: 'violation',
+                    created_at: v.created_at
+                }));
+                allItems = allItems.concat(violationItems);
+            }
+        }
+        
+        // Filter out pending items
+        allItems = allItems.filter(item => item.type === 'violation' || item.status !== 'pending');
+        
+        // Sort all items by date descending
+        allItems.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+        
+        if (allItems.length > 0) {
+            displayHistory(allItems);
+        } else {
+            loadingElement.style.display = 'none';
+            noDataElement.style.display = 'block';
         }
     } catch (error) {
         console.error('Error loading history:', error);
@@ -73,7 +102,10 @@ function displayHistory(history) {
                         <strong style="color: var(--color-primary);">📅 Reservation</strong>
                         ${item.user_name ? `<br><small style="color: #666;">Student: ${item.user_name}</small>` : ''}
                     </div>
-                    ${statusBadge}
+                    <div style="display: flex; gap: 0.5rem; align-items: center;">
+                        ${statusBadge}
+                        <button class="view-reservation-btn" data-reservation-id="${item.id}" style="padding: 0.5rem 1rem; background: var(--color-primary); color: white; border: none; border-radius: var(--radius-sm); cursor: pointer; font-size: 0.875rem;">View</button>
+                    </div>
                 </div>
                 <div style="margin: 0.5rem 0;">
                     <strong>${item.room_name}</strong><br>
@@ -102,9 +134,39 @@ function displayHistory(history) {
                     ${formatDateTime(item.created_at)}
                 </div>
             `;
+        } else if (item.type === 'violation') {
+            itemDiv.style.borderLeftColor = '#dc2626';
+            
+            itemDiv.innerHTML = `
+                <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 0.5rem;">
+                    <div>
+                        <strong style="color: #dc2626;">🚨 Violation</strong>
+                        ${item.user_email ? `<br><small style="color: #666;">Student: ${item.user_email}</small>` : ''}
+                    </div>
+                    ${item.logged_by_name ? `<span style="font-size: 0.75rem; color: #666;">Recorded by: ${item.logged_by_name}</span>` : ''}
+                </div>
+                <div style="margin: 0.5rem 0;">
+                    <strong>${item.room_name || 'Unknown Room'}</strong><br>
+                    <small style="color: #666; margin-top: 0.25rem; display: block;">
+                        <strong>Reason:</strong> ${item.description}
+                    </small>
+                </div>
+                <div style="font-size: 0.75rem; color: #999; margin-top: 0.5rem;">
+                    ${formatDateTime(item.created_at)}
+                </div>
+            `;
         }
 
         timelineElement.appendChild(itemDiv);
+    });
+
+    // Add event listeners to view buttons
+    document.querySelectorAll('.view-reservation-btn').forEach(btn => {
+        btn.addEventListener('click', function() {
+            const reservationId = this.dataset.reservationId;
+            // Navigate to reservations page with reservation details modal
+            window.location.href = `reservations.php?view=${reservationId}`;
+        });
     });
 }
 

@@ -199,8 +199,7 @@ async function showRoomAvailabilityModal() {
                                     <span class="activity-status ${statusClass}">${statusIcon} ${room.status}</span>
                                 </div>
                                 <div class="room-card-body">
-                                    <p><strong>Capacity:</strong> ${room.capacity} people</p>
-                                    <p><strong>Description:</strong> ${room.description || 'No description available'}</p>
+                                    <p style="margin-top: 1.5rem;"><strong>Description:</strong> ${room.description || 'No description available'}</p>
                                     ${isUnavailable ? `
                                         <div style="margin-top: 1rem; padding-top: 1rem; border-top: 1px solid var(--color-border);">
                                             <p style="color: var(--color-text-muted); margin-bottom: 0.75rem;">This room is currently unavailable. Join the waitlist:</p>
