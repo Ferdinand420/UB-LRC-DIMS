@@ -36,7 +36,6 @@ document.addEventListener('DOMContentLoaded', function() {
                 }
             } catch (error) {
                 showMessage('Error submitting feedback. Please try again.', 'error');
-                console.error('Error:', error);
             }
         });
     }
@@ -50,7 +49,6 @@ document.addEventListener('DOMContentLoaded', function() {
                 displayFeedback(data.feedback);
             }
         } catch (error) {
-            console.error('Error loading feedback:', error);
             loadingElement.textContent = 'Error loading feedback.';
         }
     }

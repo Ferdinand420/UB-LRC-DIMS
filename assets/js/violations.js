@@ -45,7 +45,6 @@ document.addEventListener('DOMContentLoaded', function() {
                 }
             } catch (error) {
                 showMessage('Error logging violation. Please try again.', 'error');
-                console.error('Error:', error);
             }
         });
     }
@@ -65,7 +64,6 @@ document.addEventListener('DOMContentLoaded', function() {
                 });
             }
         } catch (error) {
-            console.error('Error loading rooms:', error);
         }
     }
 
@@ -78,7 +76,6 @@ document.addEventListener('DOMContentLoaded', function() {
                 displayViolations(data.violations);
             }
         } catch (error) {
-            console.error('Error loading violations:', error);
             loadingElement.textContent = 'Error loading violations.';
         }
     }

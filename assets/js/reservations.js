@@ -298,7 +298,6 @@ document.addEventListener('DOMContentLoaded', function() {
                 });
             }
         } catch (error) {
-            console.error('Error loading rooms:', error);
         }
     }
 
@@ -311,7 +310,6 @@ document.addEventListener('DOMContentLoaded', function() {
                 displayReservations(data.reservations);
             }
         } catch (error) {
-            console.error('Error loading reservations:', error);
             loadingElement.textContent = 'Error loading reservations.';
         }
     }
@@ -427,7 +425,6 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         } catch (error) {
             showMessage('Error cancelling reservation. Please try again.', 'error');
-            console.error('Error:', error);
         }
     }
 

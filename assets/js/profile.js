@@ -16,7 +16,6 @@ async function loadProfile() {
             loadingElement.textContent = 'Error loading profile';
         }
     } catch (error) {
-        console.error('Error loading profile:', error);
         loadingElement.textContent = 'Error loading profile';
     }
 }
@@ -107,7 +106,6 @@ async function updateProfile() {
         }
     } catch (error) {
         showProfileMessage('Error updating profile. Please try again.', 'error');
-        console.error('Error:', error);
     }
 }
 

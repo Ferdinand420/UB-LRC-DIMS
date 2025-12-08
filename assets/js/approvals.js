@@ -18,7 +18,6 @@ document.addEventListener('DOMContentLoaded', function() {
                 displayReservations(data.reservations);
             }
         } catch (error) {
-            console.error('Error loading pending reservations:', error);
             loadingElement.textContent = 'Error loading reservations.';
         }
     }
@@ -132,7 +131,6 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         } catch (error) {
             showMessage('Error processing request. Please try again.', 'error');
-            console.error('Error:', error);
         }
     }
 

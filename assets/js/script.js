@@ -76,7 +76,6 @@ async function loadReservations() {
         const cell = row.insertCell(0);
         cell.colSpan = 5;
         cell.textContent = 'Failed to load reservations';
-        console.error('loadReservations failed', e);
     }
 }
 
@@ -89,7 +88,6 @@ async function updateReservations(reservations) {
         });
         loadReservations();
     } catch (e) {
-        console.error('updateReservations failed', e);
     }
 }
 
@@ -111,7 +109,6 @@ if (reservationForm) {
             reservationForm.reset();
             loadReservations();
         } catch (e) {
-            console.error('Create reservation failed', e);
         }
     });
 }
@@ -137,7 +134,6 @@ async function loadFeedback() {
     } catch (e) {
         if (e.name === 'AbortError') return;
         feedbackList.innerHTML = '<li>Failed to load feedback</li>';
-        console.error('loadFeedback failed', e);
     }
 }
 
@@ -157,7 +153,6 @@ if (feedbackForm) {
             feedbackForm.reset();
             loadFeedback();
         } catch (e) {
-            console.error('Submit feedback failed', e);
         }
     });
 }

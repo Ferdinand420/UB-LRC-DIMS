@@ -37,7 +37,7 @@ INSERT INTO users (email, password_hash, role, full_name) VALUES
 
 -- Insert rooms
 INSERT INTO rooms (name, capacity, status, description) VALUES
-('Discussion Room 1', 8, 'available', 'Main discussion room with whiteboard and projector'),
+('Discussion Room 1', 10, 'available', 'Main discussion room with whiteboard and projector'),
 ('Discussion Room 2', 10, 'available', 'Large discussion room suitable for team meetings and presentations');
 
 -- Insert reservations with various statuses

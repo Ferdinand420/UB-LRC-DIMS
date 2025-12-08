@@ -22,13 +22,6 @@
     motionQuery.addListener(applyReducedMotion);
   }
 
-  // Debug logging if ?debugVideo=1 in URL
-  if (window.location.search.indexOf('debugVideo=1') !== -1) {
-    function log(ev){ console.log('[BG Video]', ev.type, 'currentTime=', video.currentTime); }
-    ['loadedmetadata','loadeddata','canplay','play','pause','error','stalled','waiting'].forEach(function(evt){ video.addEventListener(evt, log); });
-    if (video.error) console.log('[BG Video] initial error', video.error);
-  }
-
   // Fallback if video errors or fails to load within timeout
   var fallbackApplied = false;
   function applyVideoFallback(reason) {
@@ -37,9 +30,6 @@
     var container = document.querySelector('.bg-video-container');
     if (container) { container.style.display = 'none'; }
     document.body.classList.add('bg-static');
-    if (window.location.search.indexOf('debugVideo=1') !== -1) {
-      console.warn('[BG Video] Fallback applied:', reason);
-    }
   }
 
   video.addEventListener('error', function(){ applyVideoFallback('error event'); });
@@ -64,7 +54,7 @@
     document.body.classList.remove('bg-static');
     var playPromise = video.play();
     if (playPromise && playPromise.catch) {
-      playPromise.catch(function(e){ console.warn('[BG Video] force play blocked', e); });
+      playPromise.catch(function(e){ });
     }
   }
 })();

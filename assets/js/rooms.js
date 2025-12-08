@@ -88,7 +88,6 @@ document.addEventListener('DOMContentLoaded', function() {
                 statusContainer.appendChild(table);
             }
         } catch (error) {
-            console.error('Error loading room status:', error);
             if (statusContainer) statusContainer.textContent = 'Error loading rooms.';
         }
     }

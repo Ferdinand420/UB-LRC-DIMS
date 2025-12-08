@@ -46,7 +46,6 @@ async function loadDashboardStats() {
         updateText('pending-reservations', '0');
         updateText('approved-reservations', '0');
         updateText('total-feedback', '0');
-        console.error('loadDashboardStats failed', e);
     }
 }
 
@@ -63,7 +62,6 @@ async function loadRoomAvailability() {
             updateText('available-rooms-count', 'No data');
         }
     } catch (error) {
-        console.error('Error loading room availability:', error);
         updateText('available-rooms-count', 'Check console for errors');
     }
 }
@@ -81,7 +79,6 @@ async function loadWaitlist() {
             updateText('waitlist-count', 'No data');
         }
     } catch (error) {
-        console.error('Error loading waitlist:', error);
         updateText('waitlist-count', 'Check console for errors');
     }
 }
@@ -138,7 +135,6 @@ async function loadRecentActivity() {
             activityList.innerHTML = '<p style="color: var(--color-text-muted); text-align: center; padding: 2rem;">No recent activity</p>';
         }
     } catch (error) {
-        console.error('Error loading recent activity:', error);
         const activityList = document.getElementById('activity-list');
         if (activityList) {
             activityList.innerHTML = '<p style="color: var(--color-danger); text-align: center; padding: 2rem;">Failed to load activity</p>';
@@ -224,7 +220,6 @@ async function showRoomAvailabilityModal() {
             content.innerHTML = '<p style="text-align: center; padding: 2rem; color: var(--color-danger);">Failed to load room data</p>';
         }
     } catch (error) {
-        console.error('Error loading room availability modal:', error);
         content.innerHTML = '<p style="text-align: center; padding: 2rem; color: var(--color-danger);">Error loading data</p>';
     }
 }
@@ -280,7 +275,6 @@ async function showWaitlistModal() {
             content.innerHTML = '<p style="text-align: center; padding: 2rem; color: var(--color-text-muted);">No active waitlist entries</p>';
         }
     } catch (error) {
-        console.error('Error loading waitlist modal:', error);
         content.innerHTML = '<p style="text-align: center; padding: 2rem; color: var(--color-danger);">Error loading data</p>';
     }
 }
@@ -331,7 +325,6 @@ async function joinWaitlist(event, roomId, roomName) {
             submitBtn.textContent = originalText;
         }
     } catch (error) {
-        console.error('Error joining waitlist:', error);
         alert('An error occurred while joining the waitlist');
         submitBtn.disabled = false;
         submitBtn.textContent = originalText;

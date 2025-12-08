@@ -1,12 +1,27 @@
 <?php
-// API endpoint to create a new reservation
+/**
+ * API Endpoint: Create Reservation
+ * 
+ * Creates a new room reservation for the authenticated student.
+ * Performs validation on:
+ * - Date/time availability
+ * - Capacity constraints
+ * - Time conflicts
+ * - Room status
+ * 
+ * Only accessible to students (RBAC)
+ */
 header('Content-Type: application/json');
 session_start();
 
 require_once __DIR__ . '/../config/db.php';
 require_once __DIR__ . '/../includes/auth.php';
 
-// Ensure reservation_students table exists (for backward compatibility)
+/**
+ * Ensure reservation_students table exists
+ * This table tracks which students are part of a group reservation
+ * (for backward compatibility with earlier schema versions)
+ */
 function ensure_reservation_students_table(mysqli $conn): void {
     $sql = "CREATE TABLE IF NOT EXISTS reservation_students (
         id INT AUTO_INCREMENT PRIMARY KEY,
@@ -19,14 +34,14 @@ function ensure_reservation_students_table(mysqli $conn): void {
     $conn->query($sql);
 }
 
-// Ensure user is logged in
+// AUTHORIZATION: Ensure user is logged in
 if (!get_user_id()) {
     http_response_code(401);
     echo json_encode(['success' => false, 'message' => 'Unauthorized']);
     exit;
 }
 
-// Only allow students to create reservations
+// AUTHORIZATION: Only students can create reservations
 if (!is_student()) {
     http_response_code(403);
     echo json_encode(['success' => false, 'message' => 'Only students can create reservations']);

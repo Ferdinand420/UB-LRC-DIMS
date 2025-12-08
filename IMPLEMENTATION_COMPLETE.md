@@ -74,8 +74,8 @@ Or manually:
 5. Click **Go**
 
 ### 2. Verify Setup
-Visit: http://localhost/ub-lrc-dims/auth/test_db.php
-- Should show "SUCCESS" for password verification
+Login directly: http://localhost/ub-lrc-dims/index.php
+- Use test credentials below
 
 ### 3. Login and Test
 **Student Login:** http://localhost/ub-lrc-dims/index.php
@@ -92,9 +92,7 @@ Visit: http://localhost/ub-lrc-dims/auth/test_db.php
 ub-lrc-dims/
 ├── index.php (Landing page with modals)
 ├── auth/
-│   ├── login.php (Authentication handler)
-│   ├── debug.php (Debugging tools)
-│   └── test_db.php (Database verification)
+│   └── login.php (Authentication handler)
 ├── pages/
 │   ├── dashboard.php (Student dashboard)
 │   ├── reservations.php (Booking system)

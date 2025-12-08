@@ -61,7 +61,6 @@ async function loadHistory(type = 'all') {
             noDataElement.style.display = 'block';
         }
     } catch (error) {
-        console.error('Error loading history:', error);
         loadingElement.textContent = 'Error loading history.';
     }
 }

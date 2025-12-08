@@ -42,7 +42,7 @@ ub-lrc-dims/
 ├── index.php
 ├── api/                 # JSON endpoints
 ├── assets/              # CSS, JS, media
-├── auth/                # login/logout, debug
+├── auth/                # login/logout
 ├── config/              # db connection
 ├── database/            # schema + seeds
 ├── includes/            # header, sidebar, auth helpers
