@@ -27,25 +27,11 @@ async function loadHistory(type = 'all') {
     try {
         let allItems = [];
         
-        // Fetch history (reservations, feedback)
+        // Fetch history (reservations, feedback, violations)
         const historyResponse = await fetch(`../api/get_history.php?type=${type}`);
         const historyData = await historyResponse.json();
         if (historyData.success && historyData.history) {
             allItems = allItems.concat(historyData.history);
-        }
-        
-        // Fetch violations if type is 'all' or 'violations'
-        if (type === 'all' || type === 'violations') {
-            const violationsResponse = await fetch('../api/get_violations.php');
-            const violationsData = violationsResponse.ok ? await violationsResponse.json() : { success: false };
-            if (violationsData.success && violationsData.violations) {
-                const violationItems = violationsData.violations.map(v => ({
-                    ...v,
-                    type: 'violation',
-                    created_at: v.created_at
-                }));
-                allItems = allItems.concat(violationItems);
-            }
         }
         
         // Filter out pending items
@@ -94,7 +80,9 @@ function displayHistory(history) {
 
         if (item.type === 'reservation') {
             const statusBadge = `<span class="status-badge status-${item.status}">${item.status.charAt(0).toUpperCase() + item.status.slice(1)}</span>`;
-            const students = Array.isArray(item.students) ? item.students : [];
+            const students = Array.isArray(item.students)
+                ? item.students
+                : (Array.isArray(item.student_ids) ? item.student_ids : []);
             const studentsMarkup = students.length
                 ? `<ul style="margin: 0.35rem 0 0; padding-left: 1.25rem; color: #444;">${students.map(s => `<li>${s}</li>`).join('')}</ul>`
                 : '<p style="margin: 0.35rem 0 0; color: #666;">No student IDs recorded.</p>';
@@ -131,18 +119,21 @@ function displayHistory(history) {
                 </div>
             `;
         } else if (item.type === 'feedback') {
-            const statusBadge = `<span class="status-badge status-${item.status}">${item.status.charAt(0).toUpperCase() + item.status.slice(1)}</span>`;
+            const conditionBadge = item.condition_status ? 
+                `<span style="background: ${item.condition_status === 'clean' ? '#28a745' : item.condition_status === 'dirty' ? '#ffc107' : '#dc3545'}; color: white; padding: 0.25rem 0.75rem; border-radius: 4px; font-size: 0.75rem; margin-left: 0.5rem;">
+                    ${item.condition_status.charAt(0).toUpperCase() + item.condition_status.slice(1)}
+                </span>` : '';
             
             itemDiv.innerHTML = `
                 <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 0.5rem;">
                     <div>
                         <strong style="color: var(--color-gold);">💬 Feedback</strong>
+                        ${conditionBadge}
                         ${item.user_name ? `<br><small style="color: #666;">From: ${item.user_name}</small>` : ''}
                     </div>
-                    ${statusBadge}
                 </div>
                 <div style="margin: 0.5rem 0; font-size: 0.938rem;">
-                    "${item.message}"
+                    "${item.feedback_text || item.message || 'No feedback text'}"
                 </div>
                 <div style="font-size: 0.75rem; color: #999; margin-top: 0.5rem;">
                     ${formatDateTime(item.created_at)}

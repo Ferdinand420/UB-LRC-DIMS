@@ -21,6 +21,7 @@ document.addEventListener('DOMContentLoaded', function() {
             
             const formData = {
                 student_email: document.getElementById('student-email').value,
+                violation_type: document.getElementById('violation-type').value,
                 room_id: document.getElementById('violation-room').value || null,
                 description: document.getElementById('violation-description').value
             };

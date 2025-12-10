@@ -2,6 +2,8 @@
 let confirmCallback = null;
 
 document.addEventListener('DOMContentLoaded', function() {
+    const urlParams = new URLSearchParams(window.location.search);
+    const preselectRoomId = urlParams.get('room_id');
     // Two-step form elements
     const step1Form = document.getElementById('reservation-form-step1');
     const step2Form = document.getElementById('reservation-form-step2');
@@ -50,8 +52,8 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // ============ TWO-STEP FORM HANDLERS ============
     if (step1Form && step2Form && nextBtnStep1) {
-        // Load rooms for step 1
-        loadRooms();
+        // Load rooms for step 1 (with optional preselect)
+        loadRooms(preselectRoomId);
         
         // Next button: validate step 1 and transition to step 2
         nextBtnStep1.addEventListener('click', function(e) {
@@ -279,7 +281,7 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
-    async function loadRooms() {
+    async function loadRooms(selectedRoomId) {
         try {
             const response = await fetch('../api/get_rooms.php');
             const data = await response.json();
@@ -296,6 +298,11 @@ document.addEventListener('DOMContentLoaded', function() {
                     }
                     roomSelect.appendChild(option);
                 });
+
+                // Preselect room if provided via query param and available
+                if (selectedRoomId) {
+                    roomSelect.value = selectedRoomId;
+                }
             }
         } catch (error) {
         }

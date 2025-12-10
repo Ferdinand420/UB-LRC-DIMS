@@ -8,21 +8,38 @@ require_once __DIR__ . '/../includes/auth.php';
 $today = date('Y-m-d');
 $now = date('H:i:s');
 
+// ✅ FIX: Dynamically calculate room status based on current reservations
 $sql = "
-    SELECT r.id as room_id, r.name as room_name, r.status as room_status, r.capacity,
-           res.id as reservation_id, u.full_name as user_name, u.email as user_email,
-           res.start_time, res.end_time
+    SELECT 
+        r.room_id, 
+        r.room_name, 
+        r.capacity,
+        CASE 
+            WHEN EXISTS (
+                SELECT 1 FROM reservations res 
+                WHERE res.room_id = r.room_id 
+                AND res.reservation_date = ? 
+                AND res.status = 'approved'
+                AND ? BETWEEN res.start_time AND res.end_time
+            ) THEN 'occupied'
+            ELSE 'available'
+        END as room_status,
+        res.reservation_id, 
+        u.full_name as user_name, 
+        u.ub_mail as user_email,
+        res.start_time, 
+        res.end_time
     FROM rooms r
-    LEFT JOIN reservations res ON res.room_id = r.id 
+    LEFT JOIN reservations res ON res.room_id = r.room_id 
         AND res.reservation_date = ? 
         AND res.status = 'approved'
         AND ? BETWEEN res.start_time AND res.end_time
-    LEFT JOIN users u ON u.id = res.user_id
-    ORDER BY r.name ASC
+    LEFT JOIN students u ON u.student_id = res.student_id
+    ORDER BY r.room_name ASC
 ";
 
 $stmt = $conn->prepare($sql);
-$stmt->bind_param('ss', $today, $now);
+$stmt->bind_param('ssss', $today, $now, $today, $now);
 $stmt->execute();
 $result = $stmt->get_result();
 $rooms = [];

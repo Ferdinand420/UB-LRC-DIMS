@@ -1,5 +1,5 @@
 <?php
-// API endpoint to get history (reservations and feedback)
+// API endpoint to get history (reservations, feedback, violations)
 header('Content-Type: application/json');
 session_start();
 
@@ -15,24 +15,23 @@ if (!get_user_id()) {
 
 $user_id = get_user_id();
 $is_librarian = is_librarian();
-$type = $_GET['type'] ?? 'all'; // 'reservations', 'feedback', or 'all'
+$type = $_GET['type'] ?? 'all'; // 'reservations', 'feedback', 'violations', or 'all'
 
 $history = [];
-$reservationIds = [];
 
 // Get reservations
 if ($type === 'all' || $type === 'reservations') {
     if ($is_librarian) {
         $sql = "
-            SELECT 'reservation' as type, r.id, r.reservation_date, r.start_time, r.end_time, 
-                   r.status, r.created_at, r.approved_at, r.purpose,
-                   rm.name as room_name,
-                   u.full_name as user_name, u.email as user_email,
-                   l.full_name as approved_by_name
+                        SELECT 'reservation' as type, r.reservation_id as id, r.reservation_date, r.start_time, r.end_time, 
+                                     r.status, r.created_at, r.approved_at, r.purpose, r.group_members,
+                                     rm.room_name,
+                                     s.full_name as user_name, s.ub_mail as user_email,
+                                     l.full_name as approved_by_name
             FROM reservations r
-            JOIN rooms rm ON r.room_id = rm.id
-            JOIN users u ON r.user_id = u.id
-            LEFT JOIN users l ON r.approved_by = l.id
+            JOIN rooms rm ON r.room_id = rm.room_id
+            JOIN students s ON r.student_id = s.student_id
+            LEFT JOIN librarians l ON r.librarian_id = l.librarian_id
             WHERE r.status != 'pending'
             ORDER BY r.created_at DESC
             LIMIT 50
@@ -40,12 +39,12 @@ if ($type === 'all' || $type === 'reservations') {
         $result = $conn->query($sql);
     } else {
         $sql = "
-                 SELECT 'reservation' as type, r.id, r.reservation_date, r.start_time, r.end_time,
-                     r.status, r.created_at, r.approved_at, r.purpose,
-                   rm.name as room_name
+                 SELECT 'reservation' as type, r.reservation_id as id, r.reservation_date, r.start_time, r.end_time,
+                     r.status, r.created_at, r.approved_at, r.purpose, r.group_members,
+                   rm.room_name
             FROM reservations r
-            JOIN rooms rm ON r.room_id = rm.id
-            WHERE r.user_id = ?
+            JOIN rooms rm ON r.room_id = rm.room_id
+            WHERE r.student_id = ?
             AND (r.reservation_date < CURDATE() OR r.status IN ('rejected', 'cancelled'))
             ORDER BY r.created_at DESC
             LIMIT 50
@@ -57,8 +56,13 @@ if ($type === 'all' || $type === 'reservations') {
     }
 
     while ($row = $result->fetch_assoc()) {
+        // Map group_members to student_ids array for UI
+        if (!empty($row['group_members'])) {
+            $row['student_ids'] = explode(',', $row['group_members']);
+        } else {
+            $row['student_ids'] = [];
+        }
         $history[] = $row;
-        $reservationIds[] = $row['id'];
     }
     
     if (isset($stmt)) $stmt->close();
@@ -68,20 +72,19 @@ if ($type === 'all' || $type === 'reservations') {
 if ($type === 'all' || $type === 'feedback') {
     if ($is_librarian) {
         $sql = "
-            SELECT 'feedback' as type, f.id, f.message, f.status, f.created_at,
-                   u.full_name as user_name, u.email as user_email
+            SELECT 'feedback' as type, f.feedback_id as id, f.condition_status, f.feedback_text, f.created_at,
+                   s.full_name as user_name, s.ub_mail as user_email
             FROM feedback f
-            JOIN users u ON f.user_id = u.id
-            WHERE f.status IN ('reviewed', 'resolved')
+            JOIN students s ON f.student_id = s.student_id
             ORDER BY f.created_at DESC
             LIMIT 50
         ";
         $result = $conn->query($sql);
     } else {
         $sql = "
-            SELECT 'feedback' as type, id, message, status, created_at
+            SELECT 'feedback' as type, feedback_id as id, condition_status, feedback_text, created_at
             FROM feedback
-            WHERE user_id = ?
+            WHERE student_id = ?
             ORDER BY created_at DESC
             LIMIT 50
         ";
@@ -98,34 +101,45 @@ if ($type === 'all' || $type === 'feedback') {
     if (isset($stmt)) $stmt->close();
 }
 
-// Attach student IDs for reservations
-if (!empty($reservationIds)) {
-    $placeholders = implode(',', array_fill(0, count($reservationIds), '?'));
-    $types = str_repeat('i', count($reservationIds));
-    $stmt = $conn->prepare("SELECT reservation_id, student_id_value FROM reservation_students WHERE reservation_id IN ($placeholders)");
-    if ($stmt) {
-        $stmt->bind_param($types, ...$reservationIds);
-        $stmt->execute();
-        $res = $stmt->get_result();
-        $studentMap = [];
-        while ($row = $res->fetch_assoc()) {
-            $rid = $row['reservation_id'];
-            if (!isset($studentMap[$rid])) {
-                $studentMap[$rid] = [];
-            }
-            $studentMap[$rid][] = $row['student_id_value'];
-        }
-        $stmt->close();
+// Get violations
+if ($type === 'all' || $type === 'violations') {
+    if ($is_librarian) {
+        $sql = "
+            SELECT 'violation' as type, v.violation_id as id, v.description, v.violation_type, v.status, v.created_at,
+                   s.full_name as user_name, s.ub_mail as user_email,
+                   r.room_name,
+                   l.full_name as logged_by_name
+            FROM violations v
+            LEFT JOIN students s ON v.student_id = s.student_id
+            LEFT JOIN rooms r ON v.room_id = r.room_id
+            LEFT JOIN librarians l ON v.librarian_id = l.librarian_id
+            ORDER BY v.created_at DESC
+            LIMIT 50
+        ";
+        $result = $conn->query($sql);
     } else {
-        $studentMap = [];
+        $sql = "
+            SELECT 'violation' as type, v.violation_id as id, v.description, v.violation_type, v.status, v.created_at,
+                   r.room_name,
+                   l.full_name as logged_by_name
+            FROM violations v
+            LEFT JOIN rooms r ON v.room_id = r.room_id
+            LEFT JOIN librarians l ON v.librarian_id = l.librarian_id
+            WHERE v.student_id = ?
+            ORDER BY v.created_at DESC
+            LIMIT 50
+        ";
+        $stmt = $conn->prepare($sql);
+        $stmt->bind_param("i", $user_id);
+        $stmt->execute();
+        $result = $stmt->get_result();
     }
 
-    foreach ($history as &$item) {
-        if ($item['type'] === 'reservation') {
-            $item['students'] = $studentMap[$item['id']] ?? [];
-        }
+    while ($row = $result->fetch_assoc()) {
+        $history[] = $row;
     }
-    unset($item);
+
+    if (isset($stmt)) $stmt->close();
 }
 
 // Sort by created_at descending

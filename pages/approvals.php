@@ -18,7 +18,6 @@ if (!is_librarian()) { header('Location: dashboard.php'); exit; }
     <main class="main-content">
       <header>
         <h1>Pending Approvals</h1>
-        <p style="margin:0; font-size:.75rem; color:#555; font-weight:600;">Role: <?php echo htmlspecialchars(get_role()); ?></p>
       </header>
       <div class="card">
         <h3>Reservation Requests</h3>

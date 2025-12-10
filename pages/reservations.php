@@ -19,7 +19,6 @@ require_login();
     <main class="main-content">
       <header>
         <h1>Reservations</h1>
-        <p style="margin:0; font-size:.75rem; color:#555; font-weight:600;">Role: <?php echo htmlspecialchars(get_role()); ?></p>
       </header>
 
       <?php if (is_student()): ?>

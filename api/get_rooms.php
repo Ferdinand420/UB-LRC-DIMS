@@ -14,7 +14,7 @@ if (!get_user_id()) {
 }
 
 // Get all rooms
-$sql = "SELECT id, name, capacity, status, description FROM rooms ORDER BY name";
+$sql = "SELECT room_id as id, room_name as name, capacity, status, description FROM rooms ORDER BY room_name";
 $result = $conn->query($sql);
 
 $rooms = [];

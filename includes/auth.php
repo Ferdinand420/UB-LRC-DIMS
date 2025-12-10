@@ -49,8 +49,9 @@ function require_login(): void {
 /**
  * Authenticate user with email and password
  * Verifies credentials against database using bcrypt hashing
+ * Now uses new students and librarians tables
  * 
- * @param string $email User email
+ * @param string $email User email (ub_mail)
  * @param string $password User password (plain text)
  * @return array|null User data on success, null on failure
  */
@@ -60,18 +61,37 @@ function authenticate_user(string $email, string $password): ?array {
         if (!$conn) {
             require_once __DIR__ . '/../config/db.php';
         }
-        // Fetch user with all necessary fields
-        $stmt = $conn->prepare("SELECT id, email, password_hash, role, full_name FROM users WHERE email = ?");
+        
+        // Try students table first
+        $stmt = $conn->prepare("SELECT student_id as id, ub_mail as email, password, 'student' as role, full_name FROM students WHERE ub_mail = ?");
         $stmt->bind_param('s', $email);
         $stmt->execute();
         $result = $stmt->get_result();
+        
+        if ($result->num_rows === 0) {
+            // Try librarians table
+            $stmt = $conn->prepare("SELECT librarian_id as id, ub_mail as email, password, 'librarian' as role, full_name FROM librarians WHERE ub_mail = ?");
+            $stmt->bind_param('s', $email);
+            $stmt->execute();
+            $result = $stmt->get_result();
+        }
+
+        if ($result->num_rows === 0) {
+            // Fallback to legacy users table to support older seeded data
+            $stmt = $conn->prepare("SELECT id, email, password_hash as password, role, full_name FROM users WHERE email = ?");
+            $stmt->bind_param('s', $email);
+            $stmt->execute();
+            $result = $stmt->get_result();
+        }
+
         if ($result->num_rows === 0) {
             error_log("Auth: User not found - $email");
             return null;
         }
+
         $user = $result->fetch_assoc();
         // Verify password using bcrypt
-        if (!password_verify($password, $user['password_hash'])) {
+        if (!password_verify($password, $user['password'])) {
             error_log("Auth: Invalid password for - $email");
             return null;
         }
@@ -86,10 +106,11 @@ function authenticate_user(string $email, string $password): ?array {
 /**
  * Log in a user by storing their data in session
  * Regenerates session ID for security
+ * Now uses new schema with student_id/librarian_id and ub_mail
  * 
- * @param string $email User email
+ * @param string $email User email (ub_mail)
  * @param string $role User role (student|librarian)
- * @param int|null $user_id User ID from database
+ * @param int|null $user_id User ID from database (student_id or librarian_id)
  * @return void
  */
 function login_user(string $email, string $role = 'student', ?int $user_id = null): void {
@@ -103,8 +124,8 @@ function login_user(string $email, string $role = 'student', ?int $user_id = nul
         $role = 'student'; // Default to student if invalid
     }
     $_SESSION['role'] = $role;
-    $_SESSION['email'] = $email;
-    $_SESSION['user_id'] = $user_id;
+    $_SESSION['ub_mail'] = $email;  // Changed from 'email' to 'ub_mail'
+    $_SESSION['user_id'] = $user_id;  // Will be student_id or librarian_id
 }
 
 /**
@@ -114,6 +135,15 @@ function login_user(string $email, string $role = 'student', ?int $user_id = nul
  */
 function get_user_id(): ?int {
     return $_SESSION['user_id'] ?? null;
+}
+
+/**
+ * Get current user's email from session
+ * 
+ * @return string|null User email (ub_mail) or null if not logged in
+ */
+function get_user_email(): ?string {
+    return $_SESSION['ub_mail'] ?? null;
 }
 
 /**

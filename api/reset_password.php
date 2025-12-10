@@ -27,7 +27,7 @@ if (strlen($password) < 8) {
 }
 
 // Validate token
-$stmt = $conn->prepare('SELECT pr.user_id, u.email, pr.expires_at FROM password_resets pr JOIN users u ON u.id = pr.user_id WHERE pr.token = ?');
+$stmt = $conn->prepare('SELECT user_id, user_role, expires_at FROM password_resets WHERE token = ?');
 $stmt->bind_param('s', $token);
 $stmt->execute();
 $res = $stmt->get_result();
@@ -50,10 +50,16 @@ if (strtotime($row['expires_at']) < time()) {
     exit;
 }
 
-// Update password
+// Update password in appropriate table
 $newHash = password_hash($password, PASSWORD_BCRYPT);
-$upd = $conn->prepare('UPDATE users SET password_hash = ? WHERE id = ?');
 $uid = (int)$row['user_id'];
+$role = $row['user_role'];
+
+if ($role === 'librarian') {
+    $upd = $conn->prepare('UPDATE librarians SET password = ? WHERE librarian_id = ?');
+} else {
+    $upd = $conn->prepare('UPDATE students SET password = ? WHERE student_id = ?');
+}
 $upd->bind_param('si', $newHash, $uid);
 $upd->execute();
 $upd->close();

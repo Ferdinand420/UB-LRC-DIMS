@@ -17,7 +17,6 @@ require_login();
     <main class="main-content">
       <header>
         <h1>Rooms</h1>
-        <p style="margin:0; font-size:.75rem; color:#555; font-weight:600;">Role: <?php echo htmlspecialchars(get_role()); ?></p>
       </header>
 
       
@@ -40,6 +39,9 @@ require_login();
   </div>
   <footer class="landing-footer">&copy; <?php echo date('Y'); ?> UB LRC-DIMS.</footer>
   <script src="../assets/js/sidebar.js"></script>
+  <script>
+    window.USER_ROLE = "<?php echo htmlspecialchars(get_role()); ?>";
+  </script>
   <script src="../assets/js/rooms.js"></script>
 </body>
 </html>

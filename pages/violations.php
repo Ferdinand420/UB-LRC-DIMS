@@ -18,7 +18,6 @@ if (!is_librarian()) { header('Location: dashboard.php'); exit; }
     <main class="main-content">
       <header>
         <h1>Violation Records</h1>
-        <p style="margin:0; font-size:.75rem; color:#555; font-weight:600;">Role: <?php echo htmlspecialchars(get_role()); ?></p>
       </header>
       <div class="card">
         <h3>Record Violation</h3>
@@ -26,6 +25,15 @@ if (!is_librarian()) { header('Location: dashboard.php'); exit; }
         <form id="violation-form">
           <label for="student-email">Student Email</label>
           <input type="email" id="student-email" name="student_email" placeholder="student@ub.edu.ph" required />
+          
+          <label for="violation-type">Violation Type</label>
+          <select id="violation-type" name="violation_type" required>
+            <option value="">Select violation type...</option>
+            <option value="no-show">No-show (Student didn't arrive)</option>
+            <option value="late">Late (Arrived late)</option>
+            <option value="damaged property">Damaged Property (Room/equipment damaged)</option>
+            <option value="overcapacity">Overcapacity (Exceeded room capacity)</option>
+          </select>
           
           <label for="violation-room">Room (Optional)</label>
           <select id="violation-room" name="room_id">

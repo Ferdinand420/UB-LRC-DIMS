@@ -18,7 +18,14 @@ if (!$email || !$password) {
     exit;
 }
 
-// Authenticate against database (with fallback)
+// ✅ FIX: Validate email domain is @ub.edu.ph
+if (!str_ends_with(strtolower($email), '@ub.edu.ph')) {
+    error_log("Login failed - invalid email domain: $email");
+    header('Location: /ub-lrc-dims/index.php?error=invalid_domain&email=' . urlencode($email));
+    exit;
+}
+
+// Authenticate against database
 $user = authenticate_user($email, $password);
 error_log("Auth result: " . ($user ? "Success - Role: {$user['role']}" : "Failed"));
 
@@ -28,9 +35,9 @@ if (!$user) {
     exit;
 }
 
-// Login with database role (ignore form role, trust DB)
+// Login with database role and data (ignore form role, trust DB)
 login_user($user['email'], $user['role'], $user['id']);
-error_log("Session set - Role: " . get_role());
+error_log("Session set - Role: " . get_role() . ", Email: " . get_user_email());
 
 if (get_role() === 'librarian') {
     error_log("Redirecting to librarian page");

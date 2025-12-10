@@ -81,8 +81,22 @@ if ($start_time >= $end_time) {
     exit;
 }
 
+// ✅ FIX: Validate time is within 07:00 - 17:00
+if ($start_time < '07:00:00' || $end_time > '17:00:00') {
+    http_response_code(400);
+    echo json_encode(['success' => false, 'message' => 'Reservations must be between 7:00 AM and 5:00 PM']);
+    exit;
+}
+
+// ✅ FIX: Validate capacity - max 10 students
+if (count($student_ids) > 10) {
+    http_response_code(400);
+    echo json_encode(['success' => false, 'message' => 'Maximum 10 students per reservation']);
+    exit;
+}
+
 // Check if room exists and is available
-$stmt = $conn->prepare("SELECT id, name, status FROM rooms WHERE id = ?");
+$stmt = $conn->prepare("SELECT room_id, room_name, capacity FROM rooms WHERE room_id = ?");
 $stmt->bind_param("i", $room_id);
 $stmt->execute();
 $room = $stmt->get_result()->fetch_assoc();
@@ -100,9 +114,16 @@ if ($room['status'] === 'maintenance') {
     exit;
 }
 
+// ✅ FIX: Validate student count doesn't exceed room capacity
+if (count($student_ids) > $room['capacity']) {
+    http_response_code(400);
+    echo json_encode(['success' => false, 'message' => 'Number of students exceeds room capacity of ' . $room['capacity']]);
+    exit;
+}
+
 // Check for overlapping reservations (simple interval overlap rule)
 $stmt = $conn->prepare("
-    SELECT id FROM reservations 
+    SELECT reservation_id FROM reservations 
     WHERE room_id = ? 
     AND reservation_date = ? 
     AND status IN ('pending', 'approved')
@@ -126,23 +147,24 @@ if (empty($student_ids)) {
     exit;
 }
 
-// Ensure reservation_students table exists (backward compatibility)
-ensure_reservation_students_table($conn);
+
 
 // Disable auto-commit and start transaction
 $conn->autocommit(false);
 $conn->begin_transaction();
 
 try {
-    $user_id = get_user_id();
+    $student_id = get_user_id();
+    $group_members_str = !empty($student_ids) ? implode(',', $student_ids) : null;
+    
     $stmt = $conn->prepare("
-        INSERT INTO reservations (user_id, room_id, reservation_date, start_time, end_time, purpose, status) 
-        VALUES (?, ?, ?, ?, ?, ?, 'pending')
+        INSERT INTO reservations (student_id, room_id, reservation_date, start_time, end_time, purpose, group_members, status) 
+        VALUES (?, ?, ?, ?, ?, ?, ?, 'pending')
     ");
     if (!$stmt) {
         throw new Exception("Prepare failed: " . $conn->error);
     }
-    $stmt->bind_param("iissss", $user_id, $room_id, $reservation_date, $start_time, $end_time, $purpose);
+    $stmt->bind_param("iisssss", $student_id, $room_id, $reservation_date, $start_time, $end_time, $purpose, $group_members_str);
     
     if (!$stmt->execute()) {
         throw new Exception("Reservation insert failed: " . $stmt->error);
@@ -150,20 +172,6 @@ try {
     
     $reservation_id = $stmt->insert_id;
     $stmt->close();
-
-    // Insert student IDs
-    $studentStmt = $conn->prepare("INSERT INTO reservation_students (reservation_id, student_id_value) VALUES (?, ?)");
-    if (!$studentStmt) {
-        throw new Exception("Prepare student statement failed: " . $conn->error);
-    }
-    
-    foreach ($student_ids as $sid) {
-        $studentStmt->bind_param("is", $reservation_id, $sid);
-        if (!$studentStmt->execute()) {
-            throw new Exception("Student insert failed: " . $studentStmt->error);
-        }
-    }
-    $studentStmt->close();
 
     $conn->commit();
     $conn->autocommit(true);

@@ -14,6 +14,7 @@ if (!get_user_id()) {
 }
 
 $user_id = get_user_id();
+$role = get_role();
 $data = json_decode(file_get_contents('php://input'), true);
 
 $full_name = trim($data['full_name'] ?? '');
@@ -31,8 +32,12 @@ if (strlen($full_name) < 3) {
     exit;
 }
 
-// Update user
-$stmt = $conn->prepare("UPDATE users SET full_name = ? WHERE id = ?");
+// Update user based on role
+if ($role === 'librarian') {
+    $stmt = $conn->prepare("UPDATE librarians SET full_name = ? WHERE librarian_id = ?");
+} else {
+    $stmt = $conn->prepare("UPDATE students SET full_name = ? WHERE student_id = ?");
+}
 $stmt->bind_param("si", $full_name, $user_id);
 
 if ($stmt->execute()) {

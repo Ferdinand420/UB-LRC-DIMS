@@ -51,8 +51,8 @@ $librarian_id = get_user_id();
 
 $stmt = $conn->prepare("
     UPDATE reservations 
-    SET status = ?, approved_by = ?, approved_at = NOW() 
-    WHERE id = ?
+    SET status = ?, librarian_id = ?, approved_at = NOW() 
+    WHERE reservation_id = ?
 ");
 $stmt->bind_param("sii", $new_status, $librarian_id, $reservation_id);
 

@@ -3,6 +3,8 @@ document.addEventListener('DOMContentLoaded', function() {
     const loadingElement = document.getElementById('rooms-loading');
     const noDataElement = document.getElementById('no-rooms');
     const statusContainer = document.getElementById('rooms-container');
+    const isLibrarian = (window.USER_ROLE === 'librarian');
+    const isStudent = (window.USER_ROLE === 'student');
 
     // Load rooms status table
     loadRoomsStatus();
@@ -74,8 +76,9 @@ document.addEventListener('DOMContentLoaded', function() {
                         <td>${start}</td>
                         <td>${end}</td>
                         <td>${remain}</td>
-                        <td style="text-align:right">
-                            <button class="btn btn-sm" data-action="complete" data-reservation="${r.reservation_id || ''}" ${occupied ? '' : 'disabled'}>Mark Completed</button>
+                        <td style="text-align:right; display:flex; gap:0.25rem; justify-content:flex-end; flex-wrap:wrap;">
+                            ${isLibrarian ? `<button class="btn btn-sm" data-action="complete" data-reservation="${r.reservation_id || ''}" ${occupied ? '' : 'disabled'}>Mark Completed</button>` : ''}
+                            ${isStudent ? `<button class="btn btn-sm" data-action="reserve" data-room="${r.room_id}">Reserve</button>` : ''}
                             <button class="btn btn-sm" data-action="waitlist" data-room="${r.room_id}">View Waitlist (${r.waitlist_count})</button>
                         </td>
                     `;
@@ -103,6 +106,7 @@ document.addEventListener('DOMContentLoaded', function() {
         if (!btn) return;
         const action = btn.getAttribute('data-action');
         if (action === 'complete') {
+            if (!isLibrarian) return;
             const resId = btn.getAttribute('data-reservation');
             if (!resId) return;
             if (!confirm('Mark this reservation as completed?')) return;
@@ -117,6 +121,11 @@ document.addEventListener('DOMContentLoaded', function() {
                     alert(j.message || 'Failed to update');
                 }
             }).catch(() => alert('Failed to update'));
+        } else if (action === 'reserve') {
+            if (!isStudent) return;
+            const roomId = btn.getAttribute('data-room');
+            if (!roomId) return;
+            window.location.href = `reservations.php?room_id=${encodeURIComponent(roomId)}`;
         } else if (action === 'waitlist') {
             const roomId = btn.getAttribute('data-room');
             showWaitlistModal(roomId);
@@ -145,10 +154,20 @@ document.addEventListener('DOMContentLoaded', function() {
                 html += '<table style="width:100%; border-collapse:collapse;">';
                 html += '<thead><tr><th>Student</th><th>Preferred Date</th><th>Preferred Time</th><th>Status</th></tr></thead><tbody>';
                 roomWaitlist.forEach(entry => {
+                    // Format time to 12-hour format
+                    let formattedTime = entry.preferred_time || '-';
+                    if (entry.preferred_time && entry.preferred_time !== '-') {
+                        const [hours, minutes] = entry.preferred_time.split(':');
+                        const hour = parseInt(hours);
+                        const ampm = hour >= 12 ? 'PM' : 'AM';
+                        const hour12 = hour === 0 ? 12 : hour > 12 ? hour - 12 : hour;
+                        formattedTime = `${hour12}:${minutes} ${ampm}`;
+                    }
+                    
                     html += `<tr style="border-bottom:1px solid #eee;">`;
                     html += `<td>${escapeHtml(entry.full_name || entry.email)}</td>`;
                     html += `<td>${entry.preferred_date || '-'}</td>`;
-                    html += `<td>${entry.preferred_time || '-'}</td>`;
+                    html += `<td>${formattedTime}</td>`;
                     html += `<td>${entry.status || 'waiting'}</td>`;
                     html += `</tr>`;
                 });

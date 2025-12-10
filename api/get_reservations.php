@@ -19,23 +19,27 @@ $is_librarian = is_librarian();
 // Librarians see all reservations, students see only their own
 if ($is_librarian) {
     $sql = "
-        SELECT r.id, r.reservation_date, r.start_time, r.end_time, r.purpose, r.status, r.created_at,
-               rm.name as room_name, rm.capacity,
-               u.full_name as user_name, u.email as user_email
+        SELECT r.reservation_id, r.reservation_date, r.start_time, r.end_time, r.purpose, r.status, r.created_at,
+               r.group_members,
+               rm.room_name, rm.capacity,
+               s.full_name as user_name, s.ub_mail as user_email
         FROM reservations r
-        JOIN rooms rm ON r.room_id = rm.id
-        JOIN users u ON r.user_id = u.id
+        JOIN rooms rm ON r.room_id = rm.room_id
+        LEFT JOIN students s ON r.student_id = s.student_id
         ORDER BY r.reservation_date DESC, r.start_time DESC
         LIMIT 100
     ";
     $stmt = $conn->prepare($sql);
 } else {
     $sql = "
-        SELECT r.id, r.reservation_date, r.start_time, r.end_time, r.purpose, r.status, r.created_at,
-               rm.name as room_name, rm.capacity
+        SELECT r.reservation_id, r.reservation_date, r.start_time, r.end_time, r.purpose, r.status, r.created_at,
+               r.group_members,
+               rm.room_name, rm.capacity,
+               s.ub_mail as user_email
         FROM reservations r
-        JOIN rooms rm ON r.room_id = rm.id
-        WHERE r.user_id = ?
+        JOIN rooms rm ON r.room_id = rm.room_id
+        JOIN students s ON r.student_id = s.student_id
+        WHERE r.student_id = ?
         ORDER BY r.reservation_date DESC, r.start_time DESC
     ";
     $stmt = $conn->prepare($sql);
@@ -45,41 +49,16 @@ if ($is_librarian) {
 $stmt->execute();
 $result = $stmt->get_result();
 $reservations = [];
-$reservationIds = [];
 
 while ($row = $result->fetch_assoc()) {
-    $reservations[] = $row;
-    $reservationIds[] = $row['id'];
-}
-
-// Attach student IDs
-if (!empty($reservationIds)) {
-    $placeholders = implode(',', array_fill(0, count($reservationIds), '?'));
-    $types = str_repeat('i', count($reservationIds));
-    $stmt = $conn->prepare("SELECT reservation_id, student_id_value FROM reservation_students WHERE reservation_id IN ($placeholders)");
-    if ($stmt) {
-        $stmt->bind_param($types, ...$reservationIds);
-        $stmt->execute();
-        $res = $stmt->get_result();
-        $studentMap = [];
-        while ($row = $res->fetch_assoc()) {
-            $rid = $row['reservation_id'];
-            if (!isset($studentMap[$rid])) {
-                $studentMap[$rid] = [];
-            }
-            $studentMap[$rid][] = $row['student_id_value'];
-        }
-        $stmt->close();
+    // Map group_members to student_ids array for UI
+    if (!empty($row['group_members'])) {
+        $row['student_ids'] = explode(',', $row['group_members']);
     } else {
-        $studentMap = [];
+        $row['student_ids'] = [];
     }
-
-    foreach ($reservations as &$item) {
-        $item['students'] = $studentMap[$item['id']] ?? [];
-    }
-    unset($item);
+    $reservations[] = $row;
 }
-
 $stmt->close();
 
 echo json_encode([

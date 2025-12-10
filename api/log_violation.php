@@ -18,23 +18,26 @@ $data = json_decode(file_get_contents('php://input'), true);
 
 $student_email = trim($data['student_email'] ?? '');
 $room_id = $data['room_id'] ?? null;
+$violation_type = trim($data['violation_type'] ?? '');
 $description = trim($data['description'] ?? '');
 
 // Validate
-if (empty($student_email) || empty($description)) {
+if (empty($student_email) || empty($violation_type) || empty($description)) {
     http_response_code(400);
-    echo json_encode(['success' => false, 'message' => 'Student email and description are required']);
+    echo json_encode(['success' => false, 'message' => 'Student email, violation type, and description are required']);
     exit;
 }
 
-if (strlen($description) < 10) {
+// ✅ FIX: Validate violation_type is one of the allowed ENUM values
+$allowed_types = ['no-show', 'late', 'damaged property', 'overcapacity'];
+if (!in_array(strtolower($violation_type), $allowed_types)) {
     http_response_code(400);
-    echo json_encode(['success' => false, 'message' => 'Description must be at least 10 characters']);
+    echo json_encode(['success' => false, 'message' => 'Invalid violation type. Must be one of: ' . implode(', ', $allowed_types)]);
     exit;
 }
 
 // Find student user
-$stmt = $conn->prepare("SELECT id, full_name FROM users WHERE email = ? AND role = 'student'");
+$stmt = $conn->prepare("SELECT student_id as id, full_name FROM students WHERE ub_mail = ?");
 $stmt->bind_param("s", $student_email);
 $stmt->execute();
 $result = $stmt->get_result();
@@ -59,10 +62,11 @@ if ($room_id) {
     $stmt->close();
 }
 
-// Log violation
+// ✅ FIX: Log violation with violation_type ENUM and status
 $librarian_id = get_user_id();
-$stmt = $conn->prepare("INSERT INTO violations (user_id, room_id, logged_by, description) VALUES (?, ?, ?, ?)");
-$stmt->bind_param("iiis", $student['id'], $room_id, $librarian_id, $description);
+$violation_type_lower = strtolower($violation_type);
+$stmt = $conn->prepare("INSERT INTO violations (student_id, room_id, librarian_id, violation_type, status, description) VALUES (?, ?, ?, ?, 'pending', ?)");
+$stmt->bind_param("iiiss", $student['id'], $room_id, $librarian_id, $violation_type_lower, $description);
 
 if ($stmt->execute()) {
     echo json_encode([

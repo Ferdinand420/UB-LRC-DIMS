@@ -11,10 +11,10 @@ if (!isset($_SESSION['user_id'])) {
 
 // Get all waitlist entries
 $stmt = $conn->prepare("
-    SELECT w.*, u.full_name, u.email, r.name as room_name
+    SELECT w.*, s.full_name, s.ub_mail as email, r.room_name
     FROM waitlist w
-    JOIN users u ON w.user_id = u.id
-    JOIN rooms r ON w.room_id = r.id
+    LEFT JOIN students s ON w.student_id = s.student_id
+    JOIN rooms r ON w.room_id = r.room_id
     ORDER BY w.created_at ASC
 ");
 

@@ -104,14 +104,25 @@ async function loadRecentActivity() {
                     title = `Reservation ${activity.status}${userName}`;
                     const date = new Date(activity.reservation_date);
                     const dateStr = date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
-                    description = `${activity.room_name} - ${dateStr} at ${activity.start_time.substring(0, 5)}`;
+                    
+                    // Format time to 12-hour
+                    let timeStr = '';
+                    if (activity.start_time) {
+                        const [hours, minutes] = activity.start_time.split(':');
+                        const hour = parseInt(hours);
+                        const ampm = hour >= 12 ? 'PM' : 'AM';
+                        const hour12 = hour % 12 || 12;
+                        timeStr = `${hour12}:${minutes} ${ampm}`;
+                    }
+                    
+                    description = `${activity.room_name} - ${dateStr} at ${timeStr}`;
                     statusClass = `status-${activity.status}`;
                 } else if (activity.activity_type === 'feedback') {
                     icon = '💬';
                     const userName = activity.user_name ? ` from ${activity.user_name}` : '';
                     title = `Feedback submitted${userName}`;
                     description = activity.message.length > 80 ? activity.message.substring(0, 80) + '...' : activity.message;
-                    statusClass = `status-${activity.status}`;
+                    statusClass = `status-feedback`;
                 } else if (activity.activity_type === 'violation') {
                     icon = '⚠';
                     title = `Violation logged for ${activity.user_name}`;
@@ -256,14 +267,24 @@ async function showWaitlistModal() {
                         ${data.waitlist.map(item => {
                             const date = new Date(item.preferred_date);
                             const dateStr = date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
-                            const time = item.preferred_time.substring(0, 5);
+                            
+                            // Convert to 12-hour format
+                            let timeStr = item.preferred_time;
+                            if (item.preferred_time) {
+                                const [hours, minutes] = item.preferred_time.split(':');
+                                const hour = parseInt(hours);
+                                const ampm = hour >= 12 ? 'PM' : 'AM';
+                                const hour12 = hour === 0 ? 12 : hour > 12 ? hour - 12 : hour;
+                                timeStr = `${hour12}:${minutes} ${ampm}`;
+                            }
+                            
                             return `
                                 <tr>
                                     <td>${item.full_name}</td>
                                     <td>${item.email}</td>
                                     <td>${item.room_name}</td>
                                     <td>${dateStr}</td>
-                                    <td>${time}</td>
+                                    <td>${timeStr}</td>
                                     <td><span class="activity-status status-pending">${item.status}</span></td>
                                 </tr>
                             `;

@@ -15,12 +15,12 @@ if (!is_librarian()) {
 
 // Get pending reservations
 $sql = "
-    SELECT r.id, r.reservation_date, r.start_time, r.end_time, r.purpose, r.status, r.created_at,
-           rm.name as room_name, rm.capacity,
-           u.id as user_id, u.full_name as user_name, u.email as user_email
+    SELECT r.reservation_id as id, r.reservation_date, r.start_time, r.end_time, r.purpose, r.status, r.created_at,
+           rm.room_name, rm.capacity,
+           s.student_id as user_id, s.full_name as user_name, s.ub_mail as user_email
     FROM reservations r
-    JOIN rooms rm ON r.room_id = rm.id
-    JOIN users u ON r.user_id = u.id
+    JOIN rooms rm ON r.room_id = rm.room_id
+    JOIN students s ON r.student_id = s.student_id
     WHERE r.status = 'pending'
     ORDER BY r.created_at ASC
 ";

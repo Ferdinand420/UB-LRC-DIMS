@@ -18,7 +18,6 @@ if (!is_student()) { header('Location: librarian.php'); exit; }
     <main class="main-content">
       <header>
         <h1>My Profile</h1>
-        <p style="margin:0; font-size:.75rem; color:#555; font-weight:600;">Email: <?php echo htmlspecialchars($_SESSION['email'] ?? ''); ?></p>
       </header>
 
       <!-- Profile Information -->
