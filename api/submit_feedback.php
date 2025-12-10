@@ -13,6 +13,13 @@ if (!get_user_id()) {
     exit;
 }
 
+// Prevent librarians from submitting feedback
+if (is_librarian()) {
+    http_response_code(403);
+    echo json_encode(['success' => false, 'message' => 'Librarians cannot submit feedback']);
+    exit;
+}
+
 // Get POST data
 $data = json_decode(file_get_contents('php://input'), true);
 $message = trim($data['message'] ?? '');

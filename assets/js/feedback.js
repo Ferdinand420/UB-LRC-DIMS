@@ -9,7 +9,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // Load existing feedback
     loadFeedback();
 
-    // Handle form submission
+    // Handle form submission (students only - form won't exist for librarians)
     if (form) {
         form.addEventListener('submit', async function(e) {
             e.preventDefault();

@@ -22,7 +22,8 @@ require_login();
         <p style="margin:0; font-size:.75rem; color:#555; font-weight:600;">Role: <?php echo htmlspecialchars(get_role()); ?></p>
       </header>
 
-      <!-- Feedback Form Card -->
+      <!-- Feedback Form Card (Students Only) -->
+      <?php if (!is_librarian()): ?>
       <div class="card">
         <h3>Submit Feedback</h3>
         <p style="font-size: 0.875rem; color: #666; margin-bottom: 1rem;">Share your thoughts, suggestions, or concerns about the LRC services.</p>
@@ -33,6 +34,7 @@ require_login();
           <button type="submit" class="btn btn-primary">Submit Feedback</button>
         </form>
       </div>
+      <?php endif; ?>
 
       <!-- Feedback List Card -->
       <div class="card" style="margin-top: 2rem;">
