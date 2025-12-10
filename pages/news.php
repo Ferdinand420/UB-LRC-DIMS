@@ -22,30 +22,51 @@
     <div id="news-container" style="margin-top:1.75rem; flex:1;">
       <!-- News content will be populated here -->
     </div>
-    <div style="margin-top:auto; text-align:center;">
+    <div style="margin-top:1.5rem; text-align:center;">
       <a href="../index.php" class="btn btn-primary">Back to Home</a>
     </div>
   </main>
   <script>
     document.addEventListener('DOMContentLoaded', function() {
       const newsContainer = document.getElementById('news-container');
-      const news = []; // Empty array - no news to display
+      // Placeholder library news items (static for now)
+      const news = [
+        {
+          title: 'Extended Library Hours for Finals Week',
+          date: 'December 12, 2025',
+          summary: 'LRC open 7:00 AM – 7:00 PM from Dec 12-20 to support review sessions.',
+          bullet: 'Quiet zones enforced; group rooms by reservation only.'
+        },
+        {
+          title: 'New Group Study Policy',
+          date: 'December 5, 2025',
+          summary: 'Reservations must include all student IDs to reduce no-shows.',
+          bullet: ''
+        }
+      ];
       
       if (news.length === 0) {
         newsContainer.innerHTML = '<div style="text-align:center; padding:2rem; color:#999;"><p style="font-size:1.1rem;">There is no news.</p></div>';
-      } else {
-        // Future: Render news items here
-        const newsGrid = document.createElement('section');
-        newsGrid.style.cssText = 'display:grid; gap:1.5rem; grid-template-columns:repeat(auto-fit,minmax(260px,1fr));';
-        news.forEach(item => {
-          const article = document.createElement('article');
-          article.className = 'card';
-          article.style.textAlign = 'left';
-          article.innerHTML = `<h3>${item.title}</h3><p style="font-weight:400;">${item.content}</p>`;
-          newsGrid.appendChild(article);
-        });
-        newsContainer.appendChild(newsGrid);
+        return;
       }
+
+      const newsGrid = document.createElement('section');
+      newsGrid.style.cssText = 'display:grid; gap:1.5rem; grid-template-columns:repeat(auto-fit,minmax(260px,1fr));';
+      news.forEach(item => {
+        const article = document.createElement('article');
+        article.className = 'card';
+        article.style.textAlign = 'left';
+        article.innerHTML = `
+          <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:0.5rem;">
+            <h3 style="margin:0;">${item.title}</h3>
+            <span style="font-size:0.85rem; color:#7d0920; font-weight:700; white-space:nowrap;">${item.date}</span>
+          </div>
+          <p style="font-weight:400; margin:0.5rem 0 0.75rem; color:#444;">${item.summary}</p>
+          ${item.bullet ? `<p style="margin:0; color:#666; font-size:0.95rem;">• ${item.bullet}</p>` : ''}
+        `;
+        newsGrid.appendChild(article);
+      });
+      newsContainer.appendChild(newsGrid);
     });
   </script>
   <!-- Login Modals -->

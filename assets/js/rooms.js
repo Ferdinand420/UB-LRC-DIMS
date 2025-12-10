@@ -1,7 +1,6 @@
 // Rooms page functionality
 document.addEventListener('DOMContentLoaded', function() {
     const loadingElement = document.getElementById('rooms-loading');
-    const gridElement = document.getElementById('rooms-grid');
     const noDataElement = document.getElementById('no-rooms');
     const statusContainer = document.getElementById('rooms-container');
 
@@ -33,13 +32,11 @@ document.addEventListener('DOMContentLoaded', function() {
             const rooms = data.rooms || [];
             if (rooms.length === 0) {
                 if (noDataElement) noDataElement.style.display = 'block';
-                if (gridElement) gridElement.style.display = 'none';
                 if (statusContainer) statusContainer.innerHTML = '';
                 return;
             }
 
             if (noDataElement) noDataElement.style.display = 'none';
-            if (gridElement) gridElement.style.display = 'none';
 
             if (statusContainer) {
                 statusContainer.innerHTML = '';
@@ -122,7 +119,66 @@ document.addEventListener('DOMContentLoaded', function() {
             }).catch(() => alert('Failed to update'));
         } else if (action === 'waitlist') {
             const roomId = btn.getAttribute('data-room');
-            window.location.href = `../pages/reservations.php?room=${roomId}&tab=waitlist`;
+            showWaitlistModal(roomId);
         }
     });
+
+    async function showWaitlistModal(roomId) {
+        try {
+            const response = await fetch('../api/get_waitlist.php');
+            const data = await response.json();
+
+            if (!data.success || !data.waitlist) {
+                alert('Failed to load waitlist');
+                return;
+            }
+
+            // Filter waitlist for this room
+            const roomWaitlist = data.waitlist.filter(w => parseInt(w.room_id) === parseInt(roomId));
+            const roomName = roomWaitlist.length > 0 ? roomWaitlist[0].room_name : 'Room';
+
+            let html = `<h3>${escapeHtml(roomName)} - Waitlist</h3>`;
+            
+            if (roomWaitlist.length === 0) {
+                html += '<p style="color:#999;">No one on the waitlist for this room.</p>';
+            } else {
+                html += '<table style="width:100%; border-collapse:collapse;">';
+                html += '<thead><tr><th>Student</th><th>Preferred Date</th><th>Preferred Time</th><th>Status</th></tr></thead><tbody>';
+                roomWaitlist.forEach(entry => {
+                    html += `<tr style="border-bottom:1px solid #eee;">`;
+                    html += `<td>${escapeHtml(entry.full_name || entry.email)}</td>`;
+                    html += `<td>${entry.preferred_date || '-'}</td>`;
+                    html += `<td>${entry.preferred_time || '-'}</td>`;
+                    html += `<td>${entry.status || 'waiting'}</td>`;
+                    html += `</tr>`;
+                });
+                html += '</tbody></table>';
+            }
+
+            // Create modal
+            let modal = document.getElementById('waitlist-modal');
+            if (!modal) {
+                modal = document.createElement('div');
+                modal.id = 'waitlist-modal';
+                modal.style.cssText = 'display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); z-index:1000; align-items:center; justify-content:center;';
+                document.body.appendChild(modal);
+            }
+
+            const content = modal.querySelector('.modal-content') || document.createElement('div');
+            content.className = 'modal-content';
+            content.style.cssText = 'background:white; padding:2rem; border-radius:8px; max-width:600px; max-height:80vh; overflow-y:auto;';
+            content.innerHTML = html + '<button class="btn btn-primary" style="margin-top:1rem;" onclick="this.closest(\'#waitlist-modal\').style.display=\'none\';">Close</button>';
+            
+            modal.innerHTML = '';
+            modal.appendChild(content);
+            modal.style.display = 'flex';
+
+            // Close on outside click
+            modal.addEventListener('click', (e) => {
+                if (e.target === modal) modal.style.display = 'none';
+            });
+        } catch (error) {
+            alert('Error loading waitlist');
+        }
+    }
 });
