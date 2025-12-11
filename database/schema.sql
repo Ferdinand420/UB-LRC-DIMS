@@ -40,7 +40,7 @@ CREATE TABLE IF NOT EXISTS users (
 CREATE TABLE IF NOT EXISTS rooms (
     room_id INT AUTO_INCREMENT PRIMARY KEY,
     room_name VARCHAR(50) NOT NULL,
-    status ENUM('available', 'occupied') NOT NULL DEFAULT 'available',
+    status ENUM('available', 'occupied', 'maintenance') NOT NULL DEFAULT 'available',
     capacity INT NOT NULL CHECK (capacity >= 1 AND capacity <= 10),
     description TEXT,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
@@ -56,10 +56,11 @@ CREATE TABLE IF NOT EXISTS reservations (
     reservation_date DATE NOT NULL,
     start_time TIME NOT NULL CHECK (start_time >= '07:00:00' AND start_time <= '17:00:00'),
     end_time TIME NOT NULL CHECK (end_time >= '07:00:00' AND end_time <= '17:00:00'),
-    status ENUM('pending', 'approved', 'rejected') NOT NULL DEFAULT 'pending',
+    status ENUM('pending', 'approved', 'rejected', 'cancelled', 'completed') NOT NULL DEFAULT 'pending',
     waitlist_status ENUM('none', 'queued', 'notified') NOT NULL DEFAULT 'none',
     purpose TEXT,
     group_members TEXT,
+    approved_at TIMESTAMP NULL DEFAULT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (student_id) REFERENCES students(student_id) ON DELETE CASCADE,
     FOREIGN KEY (librarian_id) REFERENCES librarians(librarian_id) ON DELETE SET NULL,
@@ -105,16 +106,16 @@ CREATE TABLE IF NOT EXISTS violations (
 
 -- Waitlist table
 CREATE TABLE IF NOT EXISTS waitlist (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    user_id INT NOT NULL,
+    waitlist_id INT AUTO_INCREMENT PRIMARY KEY,
+    student_id INT NOT NULL,
     room_id INT NOT NULL,
     preferred_date DATE NOT NULL,
     preferred_time TIME NOT NULL,
     status ENUM('waiting', 'notified', 'expired') NOT NULL DEFAULT 'waiting',
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
-    FOREIGN KEY (room_id) REFERENCES rooms(id) ON DELETE CASCADE,
-    INDEX idx_user (user_id),
+    FOREIGN KEY (student_id) REFERENCES students(student_id) ON DELETE CASCADE,
+    FOREIGN KEY (room_id) REFERENCES rooms(room_id) ON DELETE CASCADE,
+    INDEX idx_student (student_id),
     INDEX idx_room (room_id),
     INDEX idx_status (status)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
