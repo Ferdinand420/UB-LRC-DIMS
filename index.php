@@ -27,7 +27,7 @@
     <div class="landing-wrapper">
         <section class="landing-hero">
             <div class="landing-hero-inner">
-                <h1>UB Learning Resource Center Discussion Integrated Management System</h1>
+                <h1>UB Learning Resource Center: Discussion Room Integrated Management System</h1>
             </div>
         </section>
         <section class="feature-bar">
