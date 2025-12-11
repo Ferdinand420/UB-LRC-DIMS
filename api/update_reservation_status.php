@@ -26,7 +26,7 @@ if (!$reservation_id || !in_array($action, ['approve', 'reject'])) {
 }
 
 // Check if reservation exists and is pending
-$stmt = $conn->prepare("SELECT id, status FROM reservations WHERE id = ?");
+$stmt = $conn->prepare("SELECT reservation_id, status FROM reservations WHERE reservation_id = ?");
 $stmt->bind_param("i", $reservation_id);
 $stmt->execute();
 $result = $stmt->get_result();
