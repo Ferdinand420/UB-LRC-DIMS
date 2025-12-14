@@ -1,37 +1,48 @@
 <?php
-// API endpoint to submit feedback
+/**
+ * API Endpoint: Submit Feedback
+ * 
+ * Allows students (only) to submit feedback about study room conditions.
+ * Validates feedback data: condition status must be one of the ENUM values (clean/dirty/damaged),
+ * feedback text is required, and room must exist and be valid.
+ * 
+ * Request body: { "condition_status": string, "feedback_text": string, "room_id": int }
+ * Response: { "success": bool, "message": string }
+ */
+ob_start();
 header('Content-Type: application/json');
 session_start();
 
 require_once __DIR__ . '/../config/db.php';
 require_once __DIR__ . '/../includes/auth.php';
+ob_end_clean();
 
-// Ensure user is logged in
+// Verify student is logged in
 if (!get_user_id()) {
     http_response_code(401);
     echo json_encode(['success' => false, 'message' => 'Unauthorized']);
     exit;
 }
 
-// Prevent librarians from submitting feedback
+// Prevent librarians from submitting feedback (they submit violations instead)
 if (is_librarian()) {
     http_response_code(403);
     echo json_encode(['success' => false, 'message' => 'Librarians cannot submit feedback']);
     exit;
 }
 
-// Get POST data
+// Parse request: Accept both JSON and form-encoded data for compatibility
 $raw = file_get_contents('php://input');
 $data = json_decode($raw, true);
 if (!is_array($data)) {
-    // fallback to form data
+    // Fallback to form data if JSON decode fails
     $data = $_POST;
 }
 $condition_status = trim($data['condition_status'] ?? '');
 $feedback_text = trim($data['feedback_text'] ?? '');
 $room_id = isset($data['room_id']) && $data['room_id'] !== '' ? (int)$data['room_id'] : null;
 
-// ✅ FIX: Validate condition_status is one of the allowed ENUM values
+// Validate condition_status: Must be one of the ENUM values defined in schema
 if (empty($condition_status)) {
     http_response_code(400);
     echo json_encode(['success' => false, 'message' => 'Condition status is required']);
@@ -68,13 +79,6 @@ if (get_role() !== 'student') {
 
 $condition_status_lower = strtolower($condition_status);
 
-// Legacy-safe: ensure room_id column exists (nullable)
-$colRes = $conn->query("SELECT 1 FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = 'feedback' AND COLUMN_NAME = 'room_id'");
-if ($colRes && $colRes->num_rows === 0) {
-    $conn->query("ALTER TABLE feedback ADD COLUMN room_id INT NULL");
-}
-if ($colRes) { $colRes->close(); }
-
 // Validate room exists
 $roomStmt = $conn->prepare("SELECT room_id FROM rooms WHERE room_id = ? LIMIT 1");
 $roomStmt->bind_param('i', $room_id);
@@ -108,4 +112,5 @@ if ($stmt->execute()) {
 }
 
 $stmt->close();
+ob_end_flush();
 ?>

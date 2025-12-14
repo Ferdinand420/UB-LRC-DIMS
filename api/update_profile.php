@@ -1,10 +1,12 @@
 <?php
 // API endpoint to update user profile
+ob_start();
 header('Content-Type: application/json');
 session_start();
 
 require_once __DIR__ . '/../config/db.php';
 require_once __DIR__ . '/../includes/auth.php';
+ob_end_clean();
 
 // Ensure user is logged in
 if (!get_user_id()) {
@@ -51,4 +53,5 @@ if ($stmt->execute()) {
 }
 
 $stmt->close();
+ob_end_flush();
 ?>

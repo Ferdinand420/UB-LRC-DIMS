@@ -1,17 +1,29 @@
 <?php
-// Database configuration - supports environment variables with fallback to defaults
-// For production: copy .env.example to .env and update values
-// For development: defaults work with XAMPP
+/**
+ * Database Configuration & Connection
+ * 
+ * Establishes MySQLi connection with proper error handling and UTF-8 encoding.
+ * Supports environment variables for easy deployment across environments.
+ * 
+ * Environment variables (with XAMPP defaults):
+ * - DB_HOST: MySQL server address (default: localhost)
+ * - DB_USER: Database user (default: root)
+ * - DB_PASSWORD: Database password (default: empty for XAMPP)
+ * - DB_NAME: Database name (default: ub_lrc_dims)
+ * 
+ * For production: Use .env file or set system environment variables
+ */
+
 $servername = getenv('DB_HOST') ?: "localhost";
 $username = getenv('DB_USER') ?: "root";
 $password = getenv('DB_PASSWORD') !== false ? getenv('DB_PASSWORD') : "";
 $dbname = getenv('DB_NAME') ?: "ub_lrc_dims";
 
-// Create connection with error reporting
+// Enable strict error reporting for development (catches SQL errors immediately)
 mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);
 try {
     $conn = new mysqli($servername, $username, $password, $dbname);
-    // Set UTF-8 encoding for all queries
+    // Set UTF-8 encoding for all queries (supports international characters, emojis, etc.)
     $conn->set_charset('utf8mb4');
 } catch (Exception $e) {
     error_log("Database connection failed: " . $e->getMessage());

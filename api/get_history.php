@@ -1,12 +1,25 @@
 <?php
-// API endpoint to get history (reservations, feedback, violations)
+/**
+ * API Endpoint: Get History
+ * 
+ * Retrieves historical records (reservations, feedback, violations) based on user role and filter.
+ * Supports filtering by type: 'reservations', 'feedback', 'violations', or 'all'
+ * 
+ * Librarians see all records; Students see only their own.
+ * Uses prepared statements for all database queries (security).
+ * 
+ * Query parameters: ?type=reservations|feedback|violations|all
+ * Response: { "success": bool, "history": [...] }
+ */
+ob_start();
 header('Content-Type: application/json');
 session_start();
 
 require_once __DIR__ . '/../config/db.php';
 require_once __DIR__ . '/../includes/auth.php';
+ob_end_clean();
 
-// Ensure user is logged in
+// Verify authentication
 if (!get_user_id()) {
     http_response_code(401);
     echo json_encode(['success' => false, 'message' => 'Unauthorized']);
@@ -15,13 +28,15 @@ if (!get_user_id()) {
 
 $user_id = get_user_id();
 $is_librarian = is_librarian();
-$type = $_GET['type'] ?? 'all'; // 'reservations', 'feedback', 'violations', or 'all'
+$type = $_GET['type'] ?? 'all';  // Query parameter: 'reservations', 'feedback', 'violations', or 'all'
 
-$history = [];
+$history = [];  // Accumulates results from each section
 
-// Get reservations
+// Fetch Reservations
+// Status filter: Exclude pending (show only completed/approved/rejected/cancelled)
 if ($type === 'all' || $type === 'reservations') {
     if ($is_librarian) {
+        // Librarians see all non-pending reservations with approval details
         $sql = "
                         SELECT 'reservation' as type, r.reservation_id as id, r.reservation_date, r.start_time, r.end_time, 
                                      r.status, r.created_at, r.approved_at, r.purpose, r.group_members,
@@ -36,7 +51,14 @@ if ($type === 'all' || $type === 'reservations') {
             ORDER BY r.created_at DESC
             LIMIT 50
         ";
-        $result = $conn->query($sql);
+        $stmt = $conn->prepare($sql);
+        if (!$stmt) {
+            http_response_code(500);
+            echo json_encode(['success' => false, 'message' => 'Database error']);
+            exit;
+        }
+        $stmt->execute();
+        $result = $stmt->get_result();
     } else {
         $sql = "
                  SELECT 'reservation' as type, r.reservation_id as id, r.reservation_date, r.start_time, r.end_time,
@@ -79,7 +101,14 @@ if ($type === 'all' || $type === 'feedback') {
             ORDER BY f.created_at DESC
             LIMIT 50
         ";
-        $result = $conn->query($sql);
+        $stmt = $conn->prepare($sql);
+        if (!$stmt) {
+            http_response_code(500);
+            echo json_encode(['success' => false, 'message' => 'Database error']);
+            exit;
+        }
+        $stmt->execute();
+        $result = $stmt->get_result();
     } else {
         $sql = "
             SELECT 'feedback' as type, feedback_id as id, condition_status, feedback_text, created_at
@@ -116,7 +145,14 @@ if ($type === 'all' || $type === 'violations') {
             ORDER BY v.created_at DESC
             LIMIT 50
         ";
-        $result = $conn->query($sql);
+        $stmt = $conn->prepare($sql);
+        if (!$stmt) {
+            http_response_code(500);
+            echo json_encode(['success' => false, 'message' => 'Database error']);
+            exit;
+        }
+        $stmt->execute();
+        $result = $stmt->get_result();
     } else {
         $sql = "
             SELECT 'violation' as type, v.violation_id as id, v.description, v.violation_type, v.status, v.created_at,
@@ -151,4 +187,5 @@ echo json_encode([
     'success' => true,
     'history' => $history
 ]);
+ob_end_flush();
 ?>

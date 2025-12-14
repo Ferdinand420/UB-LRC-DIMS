@@ -1,10 +1,12 @@
 <?php
 // API endpoint to mark feedback as received/reviewed
+ob_start();
 header('Content-Type: application/json');
 session_start();
 
 require_once __DIR__ . '/../config/db.php';
 require_once __DIR__ . '/../includes/auth.php';
+ob_end_clean();
 
 // Ensure user is librarian; allow legacy sessions with role check even if user_id missing
 $role = get_role();
@@ -105,11 +107,12 @@ $stmt = $conn->prepare($sql);
 $stmt->bind_param($types, ...$params);
 $ok = $stmt->execute();
 $stmt->close();
-
 if ($ok) {
     echo json_encode(['success' => true, 'message' => 'Feedback marked as received.']);
 } else {
     http_response_code(500);
     echo json_encode(['success' => false, 'message' => 'Failed to update feedback.']);
 }
+ob_end_flush();
+?>
 ?>

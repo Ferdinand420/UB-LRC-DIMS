@@ -1,10 +1,12 @@
 <?php
 // API endpoint to get user profile
+ob_start();
 header('Content-Type: application/json');
 session_start();
 
 require_once __DIR__ . '/../config/db.php';
 require_once __DIR__ . '/../includes/auth.php';
+ob_end_clean();
 
 // Ensure user is logged in
 if (!get_user_id()) {
@@ -103,4 +105,5 @@ echo json_encode([
     'stats' => $stats,
     'recent_reservations' => $recent_reservations
 ]);
+ob_end_flush();
 ?>

@@ -1,19 +1,30 @@
 <?php
-// API endpoint to log a violation (Librarians only)
+/**
+ * API Endpoint: Log Violation
+ * 
+ * Allows librarians to record rule violations against students.
+ * Violations include: no-show, late, damaged property, overcapacity
+ * 
+ * Authorization: Librarians only (RBAC)
+ * Request body: { "student_email": string, "violation_type": string, "room_id": int, "description": string }
+ * Response: { "success": bool, "message": string }
+ */
+ob_start();
 header('Content-Type: application/json');
 session_start();
 
 require_once __DIR__ . '/../config/db.php';
 require_once __DIR__ . '/../includes/auth.php';
+ob_end_clean();
 
-// Ensure user is librarian
+// Authorization check: Only librarians can log violations
 if (!is_librarian()) {
     http_response_code(403);
     echo json_encode(['success' => false, 'message' => 'Unauthorized - Librarians only']);
     exit;
 }
 
-// Get POST data
+// Parse request payload
 $data = json_decode(file_get_contents('php://input'), true);
 
 $student_email = trim($data['student_email'] ?? '');
@@ -21,14 +32,14 @@ $room_id = $data['room_id'] ?? null;
 $violation_type = trim($data['violation_type'] ?? '');
 $description = trim($data['description'] ?? '');
 
-// Validate
+// Validate required fields
 if (empty($student_email) || empty($violation_type) || empty($description)) {
     http_response_code(400);
     echo json_encode(['success' => false, 'message' => 'Student email, violation type, and description are required']);
     exit;
 }
 
-// ✅ FIX: Validate violation_type is one of the allowed ENUM values
+// Validate violation_type: Must be one of the ENUM values defined in schema
 $allowed_types = ['no-show', 'late', 'damaged property', 'overcapacity'];
 if (!in_array(strtolower($violation_type), $allowed_types)) {
     http_response_code(400);
@@ -52,7 +63,7 @@ if (!$student) {
 
 // If room_id provided, verify it exists
 if ($room_id) {
-    $stmt = $conn->prepare("SELECT id FROM rooms WHERE id = ?");
+    $stmt = $conn->prepare("SELECT room_id FROM rooms WHERE room_id = ?");
     $stmt->bind_param("i", $room_id);
     $stmt->execute();
     $result = $stmt->get_result();

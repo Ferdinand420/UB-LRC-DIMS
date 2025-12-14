@@ -11,11 +11,16 @@
  * 
  * Only accessible to students (RBAC)
  */
+// Set header first and suppress all output before JSON
+ob_start();
 header('Content-Type: application/json');
 session_start();
 
 require_once __DIR__ . '/../config/db.php';
 require_once __DIR__ . '/../includes/auth.php';
+
+// Clear any buffered output
+ob_end_clean();
 
 /**
  * Ensure reservation_students table exists
@@ -28,7 +33,7 @@ function ensure_reservation_students_table(mysqli $conn): void {
         reservation_id INT NOT NULL,
         student_id_value VARCHAR(255) NOT NULL,
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-        FOREIGN KEY (reservation_id) REFERENCES reservations(id) ON DELETE CASCADE,
+        FOREIGN KEY (reservation_id) REFERENCES reservations(reservation_id) ON DELETE CASCADE,
         INDEX idx_reservation (reservation_id)
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;";
     $conn->query($sql);
@@ -57,6 +62,14 @@ $start_time = $data['start_time'] ?? null;
 $end_time = $data['end_time'] ?? null;
 $purpose = $data['purpose'] ?? '';
 $student_ids = isset($data['student_ids']) && is_array($data['student_ids']) ? array_filter($data['student_ids']) : [];
+
+// Normalize times to HH:MM:SS format for consistency
+if ($start_time && strlen($start_time) == 5) {
+    $start_time = $start_time . ':00';
+}
+if ($end_time && strlen($end_time) == 5) {
+    $end_time = $end_time . ':00';
+}
 
 // Validate required fields
 if (!$room_id || !$reservation_date || !$start_time || !$end_time) {
@@ -96,7 +109,7 @@ if (count($student_ids) > 10) {
 }
 
 // Check if room exists and is available
-$stmt = $conn->prepare("SELECT room_id, room_name, capacity FROM rooms WHERE room_id = ?");
+$stmt = $conn->prepare("SELECT room_id, room_name, capacity, status FROM rooms WHERE room_id = ?");
 $stmt->bind_param("i", $room_id);
 $stmt->execute();
 $room = $stmt->get_result()->fetch_assoc();
@@ -185,6 +198,10 @@ try {
     $conn->rollback();
     $conn->autocommit(true);
     http_response_code(500);
+    // Ensure clean JSON output
+    error_log("Reservation error: " . $e->getMessage());
     echo json_encode(['success' => false, 'message' => 'Failed to create reservation: ' . $e->getMessage()]);
 }
+// Clean up any buffered output
+ob_end_flush();
 ?>

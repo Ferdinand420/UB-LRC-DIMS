@@ -1,14 +1,32 @@
 <?php
+/**
+ * API Endpoint: Get Room Status
+ * 
+ * Returns real-time availability of all study rooms for the current date/time.
+ * Includes occupancy status, reserved time slots, and waitlist counts.
+ * Used by dashboard and room selection interfaces.
+ * 
+ * Response includes:
+ * - room_id, room_name, capacity
+ * - room_status: 'available' or 'occupied'
+ * - current reservation details (if occupied)
+ * - remaining_seconds: time until room is free
+ * - waitlist_count: students waiting for this room
+ */
+ob_start();
 header('Content-Type: application/json');
 session_start();
 require_once __DIR__ . '/../config/db.php';
 require_once __DIR__ . '/../includes/auth.php';
+ob_end_clean();
 
-// Fetch rooms with current occupancy info (today)
+// Get current date and time for availability calculation
 $today = date('Y-m-d');
 $now = date('H:i:s');
 
-// ✅ FIX: Dynamically calculate room status based on current reservations
+// Build query: Determine room occupancy based on approved reservations for current time slot
+// CASE expression dynamically sets room_status: 'occupied' if current time falls within
+// an approved reservation, otherwise 'available'
 $sql = "
     SELECT 
         r.room_id, 
@@ -38,6 +56,19 @@ $sql = "
     ORDER BY r.room_name ASC
 ";
 
+// Optimization: Fetch all waitlist counts in a single aggregate query instead of per-room
+// This prevents N+1 query pattern that would otherwise query waitlist for each room in the loop
+// GROUP BY room_id produces: [{room_id: 1, cnt: 2}, {room_id: 2, cnt: 0}, ...]
+$wlSql = "SELECT room_id, COUNT(*) as cnt FROM waitlist WHERE status = 'waiting' GROUP BY room_id";
+$wlStmt = $conn->prepare($wlSql);
+$wlStmt->execute();
+$wlResult = $wlStmt->get_result();
+$waitlistCounts = [];  // Associative array: room_id => count for O(1) lookups
+while ($wlRow = $wlResult->fetch_assoc()) {
+    $waitlistCounts[$wlRow['room_id']] = (int)$wlRow['cnt'];
+}
+$wlStmt->close();
+
 $stmt = $conn->prepare($sql);
 $stmt->bind_param('ssss', $today, $now, $today, $now);
 $stmt->execute();
@@ -52,16 +83,12 @@ while ($row = $result->fetch_assoc()) {
     } else {
         $row['remaining_seconds'] = null;
     }
-    // add waitlist count
-    $wlStmt = $conn->prepare('SELECT COUNT(*) as cnt FROM waitlist WHERE room_id = ? AND status = "waiting"');
-    $wlStmt->bind_param('i', $row['room_id']);
-    $wlStmt->execute();
-    $wlCnt = $wlStmt->get_result()->fetch_assoc()['cnt'] ?? 0;
-    $wlStmt->close();
-    $row['waitlist_count'] = (int)$wlCnt;
+    // add waitlist count from pre-fetched data
+    $row['waitlist_count'] = $waitlistCounts[$row['room_id']] ?? 0;
     $rooms[] = $row;
 }
 $stmt->close();
 
 echo json_encode(['success' => true, 'rooms' => $rooms]);
+ob_end_flush();
 ?>

@@ -1,9 +1,11 @@
 <?php
 // API endpoint to get recent activity across the system
+ob_start();
 header('Content-Type: application/json');
 session_start();
 require_once __DIR__ . '/../config/db.php';
 require_once __DIR__ . '/../includes/auth.php';
+ob_end_clean();
 
 // Ensure user is logged in; allow librarians even if user_id missing in older sessions
 $user_id = get_user_id();
@@ -178,3 +180,5 @@ echo json_encode([
     'success' => true,
     'activities' => $activities
 ]);
+ob_end_flush();
+?>

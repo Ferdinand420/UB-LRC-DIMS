@@ -27,12 +27,20 @@ $sql = "
     LIMIT 100
 ";
 
-$result = $conn->query($sql);
+$stmt = $conn->prepare($sql);
+if (!$stmt) {
+    http_response_code(500);
+    echo json_encode(['success' => false, 'message' => 'Database error']);
+    exit;
+}
+$stmt->execute();
+$result = $stmt->get_result();
 $violations = [];
 
 while ($row = $result->fetch_assoc()) {
     $violations[] = $row;
 }
+$stmt->close();
 
 echo json_encode([
     'success' => true,

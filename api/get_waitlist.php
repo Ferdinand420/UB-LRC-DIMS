@@ -1,10 +1,13 @@
 <?php
+ob_start();
 require_once __DIR__ . '/../config/db.php';
+require_once __DIR__ . '/../includes/auth.php';
 
 header('Content-Type: application/json');
 session_start();
 
-if (!isset($_SESSION['user_id'])) {
+if (!get_user_id()) {
+    http_response_code(401);
     echo json_encode(['success' => false, 'message' => 'Authentication required']);
     exit;
 }
@@ -33,4 +36,5 @@ echo json_encode([
 
 $stmt->close();
 $conn->close();
+ob_end_flush();
 ?>

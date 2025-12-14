@@ -127,11 +127,13 @@ document.addEventListener('DOMContentLoaded', function() {
             
             // Retrieve and merge step 1 data
             const step1Values = JSON.parse(step1Data.dataset.values || '{}');
+            // Ensure times have :00 seconds appended if missing
+            const formatTimeValue = (t) => t && t.length === 5 ? t + ':00' : t;
             const formData = {
                 room_id: parseInt(step1Values.room_id),
                 reservation_date: step1Values.date,
-                start_time: step1Values.start_time,
-                end_time: step1Values.end_time,
+                start_time: formatTimeValue(step1Values.start_time),
+                end_time: formatTimeValue(step1Values.end_time),
                 purpose: step1Values.purpose,
                 student_ids: studentIds
             };
@@ -249,8 +251,13 @@ document.addEventListener('DOMContentLoaded', function() {
             });
             let data;
             try {
-                data = await response.json();
+                const text = await response.text();
+                console.log('Response status:', response.status);
+                console.log('Response text:', text);
+                data = JSON.parse(text);
             } catch (err) {
+                console.error('Failed to parse response:', err);
+                console.error('Response was:', text);
                 showMessage('Server error. Please try again.', 'error');
                 return;
             }

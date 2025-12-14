@@ -1,12 +1,24 @@
 <?php
-// API endpoint to add user to waitlist
+/**
+ * API Endpoint: Add to Waitlist
+ * 
+ * Allows students to join the waitlist for unavailable rooms.
+ * When a room becomes available at the specified date/time,
+ * the student will be notified.
+ * 
+ * Authorization: Students only (Librarians cannot join waitlist)
+ * Request body: { "room_id": int, "preferred_date": string, "preferred_time": string }
+ * Response: { "success": bool, "message": string }
+ */
+ob_start();
 header('Content-Type: application/json');
 session_start();
 
 require_once __DIR__ . '/../config/db.php';
 require_once __DIR__ . '/../includes/auth.php';
+ob_end_clean();
 
-// Ensure user is logged in
+// Verify authentication
 $user_id = get_user_id();
 if (!$user_id) {
     http_response_code(401);
@@ -14,14 +26,14 @@ if (!$user_id) {
     exit;
 }
 
-// Only students can join waitlist
+// Authorization check: Only students can join waitlist
 if (is_librarian()) {
     http_response_code(403);
     echo json_encode(['success' => false, 'message' => 'Librarians cannot join waitlist']);
     exit;
 }
 
-// Get POST data
+// Parse request payload
 $data = json_decode(file_get_contents('php://input'), true);
 $room_id = $data['room_id'] ?? null;
 $preferred_date = $data['preferred_date'] ?? null;
@@ -35,7 +47,7 @@ if (!$room_id || !$preferred_date || !$preferred_time) {
 }
 
 // Validate room exists
-$sql = "SELECT id, name FROM rooms WHERE id = ?";
+$sql = "SELECT room_id, room_name FROM rooms WHERE room_id = ?";
 $stmt = $conn->prepare($sql);
 $stmt->bind_param("i", $room_id);
 $stmt->execute();
@@ -48,7 +60,7 @@ if ($result->num_rows === 0) {
 $stmt->close();
 
 // Check if user is already on waitlist for this room and date
-$sql = "SELECT id FROM waitlist WHERE user_id = ? AND room_id = ? AND preferred_date = ? AND status = 'waiting'";
+$sql = "SELECT id FROM waitlist WHERE student_id = ? AND room_id = ? AND preferred_date = ? AND status = 'waiting'";
 $stmt = $conn->prepare($sql);
 $stmt->bind_param("iis", $user_id, $room_id, $preferred_date);
 $stmt->execute();
@@ -61,7 +73,7 @@ if ($result->num_rows > 0) {
 $stmt->close();
 
 // Add to waitlist
-$sql = "INSERT INTO waitlist (user_id, room_id, preferred_date, preferred_time, status) VALUES (?, ?, ?, ?, 'waiting')";
+$sql = "INSERT INTO waitlist (student_id, room_id, preferred_date, preferred_time, status) VALUES (?, ?, ?, ?, 'waiting')";
 $stmt = $conn->prepare($sql);
 $stmt->bind_param("iiss", $user_id, $room_id, $preferred_date, $preferred_time);
 
